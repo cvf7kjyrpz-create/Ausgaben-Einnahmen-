@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanzen">
-    
     <link rel="apple-touch-icon" href="https://img.icons8.com/3d-fluency/180/wallet.png">
 
     <title>Finanzübersicht</title>
@@ -44,47 +43,69 @@
             overflow-x: hidden;
         }
 
+        /* Views (Pages) Logic */
+        .view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            flex: 1;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         /* Header */
         header {
-            position: sticky;
-            top: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
-            border-bottom: 0.5px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         h1 {
-            font-size: 22px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 600;
             margin: 0;
         }
 
-        .add-btn {
+        .header-btn {
             background: none;
             border: none;
             color: var(--accent-blue);
-            font-size: 28px;
-            line-height: 1;
-            padding: 0 5px;
+            font-size: 17px;
             cursor: pointer;
+            padding: 5px;
         }
 
-        main {
+        .header-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        /* --- DASHBOARD STYLES --- */
+        .dashboard-content {
             padding: 20px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        /* Balance Card */
-        .balance-card {
+        .balance-container {
             text-align: center;
-            padding: 30px 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .balance-label {
@@ -96,61 +117,113 @@
         }
 
         .balance-amount {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
-            transition: color 0.3s ease;
+            letter-spacing: -0.5px;
         }
+        .balance-amount.pos { color: var(--accent-green); }
+        .balance-amount.neg { color: var(--accent-red); }
 
-        .balance-amount.positive { color: var(--accent-green); }
-        .balance-amount.negative { color: var(--accent-red); }
-
-        /* Income Section */
-        .income-container {
+        .summary-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
             background-color: var(--card-bg);
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+        .summary-item span {
+            display: block;
+        }
+        .sum-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+        .sum-val { font-size: 17px; font-weight: 600; }
+        .sum-val.inc { color: var(--accent-green); }
+        .sum-val.exp { color: var(--accent-red); }
+
+        .nav-btn {
+            margin-top: 40px;
+            background-color: #2C2C2E;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 500;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            cursor: pointer;
+            width: 100%;
         }
 
-        .income-label {
-            font-size: 17px;
-            font-weight: 500;
-        }
+        .nav-arrow { color: var(--text-secondary); }
 
-        .income-input {
-            background: transparent;
-            border: none;
-            text-align: right;
-            color: var(--accent-green);
-            font-size: 17px;
-            font-weight: 600;
-            width: 120px;
-            outline: none;
+        /* Backup Area (Dezent) */
+        .backup-area {
+            margin-top: auto;
+            padding-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
-
-        /* Lists */
-        .section-header {
-            text-transform: uppercase;
-            color: var(--text-secondary);
+        .backup-link {
             font-size: 13px;
-            margin-bottom: 10px;
-            margin-left: 15px;
+            color: #48484A;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
 
-        .expense-list {
+        /* --- LIST VIEW STYLES --- */
+        
+        /* Segmented Control (Switch) */
+        .segmented-control {
+            display: flex;
+            background-color: #1C1C1E;
+            padding: 2px;
+            border-radius: 9px;
+            margin: 10px 20px 20px 20px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            padding: 6px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 7px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .segment-btn.active {
+            background-color: #636366;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .list-container {
+            padding: 0 20px;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 40px;
+        }
+
+        .entry-list {
             background-color: var(--card-bg);
             border-radius: 12px;
             list-style: none;
             padding: 0;
-            margin: 0 0 30px 0;
+            margin: 0;
         }
 
-        .expense-item {
+        .entry-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -158,7 +231,7 @@
             position: relative;
         }
 
-        .expense-item:not(:last-child)::after {
+        .entry-item:not(:last-child)::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -168,421 +241,422 @@
             background-color: var(--separator);
         }
 
-        .item-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .item-name {
-            font-size: 17px;
-            margin-bottom: 4px;
-        }
-
-        .item-subtext {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .item-right {
+        .entry-details { display: flex; flex-direction: column; flex: 1; }
+        .entry-name { font-size: 17px; margin-bottom: 2px; color: white;}
+        .entry-sub { font-size: 12px; color: var(--text-secondary); }
+        
+        .entry-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
-        .item-price {
-            font-size: 17px;
-            color: var(--text-primary);
-        }
-
-        .delete-btn {
-            background: #FF453A20;
-            color: var(--accent-red);
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        /* Backup Buttons Area */
-        .backup-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 40px;
-            margin-bottom: 40px;
-        }
-
-        .backup-btn {
-            flex: 1;
-            background-color: #2C2C2E;
-            color: var(--text-secondary);
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.2s;
-        }
-
-        .backup-btn:active {
-            background-color: #3A3A3C;
-            color: white;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-            z-index: 200;
-            display: none;
-            justify-content: center;
-            align-items: flex-end;
-        }
-
-        .modal-overlay.open {
-            display: flex;
-        }
-
-        .modal-sheet {
-            background-color: #1C1C1E;
-            width: 100%;
-            max-width: 600px;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-        }
-
-        .modal-btn {
+        .entry-amount { font-size: 17px; font-weight: 500; margin-right: 5px; }
+        
+        /* Action Buttons (Edit & Delete) */
+        .action-btn {
             background: none;
             border: none;
-            font-size: 17px;
-            color: var(--accent-blue);
-            cursor: pointer;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .modal-input {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: none;
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 17px;
-            color: white;
-            outline: none;
-        }
-
-        .toggle-container {
-            background-color: var(--input-bg);
-            border-radius: 8px;
-            padding: 3px;
-            display: flex;
-            margin-bottom: 25px;
-        }
-
-        .toggle-btn {
-            flex: 1;
             padding: 8px;
-            text-align: center;
-            border-radius: 6px;
-            font-size: 14px;
-            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
+        
+        .action-btn:active { opacity: 1; color: white; }
+        .action-btn svg { width: 18px; height: 18px; }
 
-        .toggle-btn.active {
-            background-color: #636366;
-            color: white;
-            font-weight: 600;
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 100; display: none;
+            justify-content: center; align-items: flex-end;
         }
+        .modal-overlay.open { display: flex; }
+        
+        .modal-sheet {
+            background-color: #1C1C1E; width: 100%; max-width: 600px;
+            border-radius: 20px 20px 0 0; padding: 20px;
+            animation: slideUp 0.3s;
+        }
+        @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
+
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
+        .modal-input {
+            width: 100%; background-color: var(--input-bg); border: none;
+            border-radius: 10px; padding: 14px; font-size: 17px; color: white;
+            outline: none; margin-bottom: 15px;
+        }
+        
+        /* Modal Category Switch */
+        .cat-switch {
+            display: flex; background: var(--input-bg); border-radius: 8px;
+            padding: 3px; margin-bottom: 15px;
+        }
+        .cat-opt {
+            flex: 1; text-align: center; padding: 8px; font-size: 13px;
+            border-radius: 6px; color: var(--text-secondary); cursor: pointer;
+        }
+        .cat-opt.active-inc { background: var(--accent-green); color: black; font-weight: 600; }
+        .cat-opt.active-exp { background: var(--accent-red); color: white; font-weight: 600; }
 
         .save-btn {
-            width: 100%;
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
+            width: 100%; background-color: var(--accent-blue); color: white;
+            border: none; border-radius: 12px; padding: 16px; 
+            font-size: 17px; font-weight: 600; cursor: pointer;
         }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Mein Budget</h1>
-        <button class="add-btn" onclick="openModal()">+</button>
-    </header>
+    <div id="view-dashboard" class="view active">
+        <header>
+            <h1>Mein Budget</h1>
+            <button class="header-btn header-icon" onclick="openModal()">+</button>
+        </header>
 
-    <main>
-        <div class="balance-card">
-            <div class="balance-label">Verfügbar / Monat</div>
-            <div class="balance-amount" id="balanceDisplay">0,00 €</div>
+        <div class="dashboard-content">
+            <div class="balance-container">
+                <div class="balance-label">Monatlich Verfügbar</div>
+                <div class="balance-amount" id="mainBalance">0,00 €</div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-item">
+                    <span class="sum-label">Einnahmen</span>
+                    <span class="sum-val inc" id="sumIncome">0 €</span>
+                </div>
+                <div class="summary-item">
+                    <span class="sum-label">Ausgaben</span>
+                    <span class="sum-val exp" id="sumExpense">0 €</span>
+                </div>
+            </div>
+
+            <button class="nav-btn" onclick="goToDetails()">
+                <span>Alle Einträge verwalten</span>
+                <span class="nav-arrow">›</span>
+            </button>
+
+            <div class="backup-area">
+                <button class="backup-link" onclick="exportData()">↓ Backup</button>
+                <button class="backup-link" onclick="document.getElementById('fileInput').click()">↑ Laden</button>
+            </div>
+            <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="importData(this)">
+        </div>
+    </div>
+
+    <div id="view-details" class="view">
+        <header>
+            <button class="header-btn" onclick="goToDashboard()">‹ Zurück</button>
+            <h1>Einträge</h1>
+            <button class="header-btn header-icon" onclick="openModal()">+</button>
+        </header>
+
+        <div class="segmented-control">
+            <div class="segment-btn active" id="seg-income" onclick="switchList('income')">Einnahmen</div>
+            <div class="segment-btn" id="seg-expense" onclick="switchList('expense')">Ausgaben</div>
         </div>
 
-        <div class="income-container">
-            <span class="income-label">Netto Einnahmen</span>
-            <input type="number" class="income-input" id="incomeInput" placeholder="0" inputmode="decimal" onchange="updateIncome()">
+        <div class="list-container">
+            <ul class="entry-list" id="entryList">
+                </ul>
         </div>
-
-        <div class="section-header">Laufende Kosten</div>
-        <ul class="expense-list" id="expenseList">
-            </ul>
-
-        <div class="section-header">Datenverwaltung</div>
-        <div class="backup-section">
-            <button class="backup-btn" onclick="exportData()">↓ Backup speichern</button>
-            <button class="backup-btn" onclick="document.getElementById('fileInput').click()">↑ Backup laden</button>
-        </div>
-        
-        <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="importData(this)">
-    </main>
+    </div>
 
     <div class="modal-overlay" id="modal">
         <div class="modal-sheet">
             <div class="modal-header">
-                <button class="modal-btn" onclick="closeModal()">Abbrechen</button>
-                <span style="font-weight: 600; font-size: 17px;">Neue Ausgabe</span>
-                <button class="modal-btn" style="opacity: 0;">Leer</button>
+                <button class="header-btn" onclick="closeModal()">Abbrechen</button>
+                <span style="font-weight: 600;" id="modalTitle">Neuer Eintrag</span>
+                <span style="width: 50px;"></span>
             </div>
 
-            <div class="input-group">
-                <input type="text" class="modal-input" id="nameInput" placeholder="Name (z.B. Miete)" autocomplete="off">
+            <div class="cat-switch">
+                <div class="cat-opt" id="opt-income" onclick="setModalCategory('income')">Einnahme</div>
+                <div class="cat-opt" id="opt-expense" onclick="setModalCategory('expense')">Ausgabe</div>
             </div>
 
-            <div class="input-group">
-                <input type="number" class="modal-input" id="amountInput" placeholder="Betrag (z.B. 800)" inputmode="decimal">
+            <input type="text" class="modal-input" id="inpName" placeholder="Bezeichnung (z.B. Gehalt, Miete)">
+            <input type="number" class="modal-input" id="inpAmount" placeholder="Betrag (z.B. 2500)" inputmode="decimal">
+
+            <div class="cat-switch" style="background: #2C2C2E;">
+                <div class="cat-opt" id="freq-monthly" onclick="setFrequency('monthly')" style="background: #636366; color: white;">Monatlich</div>
+                <div class="cat-opt" id="freq-yearly" onclick="setFrequency('yearly')">Jährlich</div>
             </div>
 
-            <div class="toggle-container">
-                <div class="toggle-btn active" id="btnMonthly" onclick="setType('monthly')">Monatlich</div>
-                <div class="toggle-btn" id="btnYearly" onclick="setType('yearly')">Jährlich</div>
-            </div>
-
-            <button class="save-btn" onclick="addExpense()">Hinzufügen</button>
+            <button class="save-btn" onclick="saveEntry()">Speichern</button>
         </div>
     </div>
 
     <script>
-        // --- LOGIK ---
+        // --- ICONS (SVG) ---
+        const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+        const ICON_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
 
-        let expenses = [];
-        let income = 0;
-        let newType = 'monthly';
+        // --- DATA STRUCTURE ---
+        // entries = [ { id, name, amount, category: 'income'|'expense', freq: 'monthly'|'yearly' } ]
+        let entries = [];
+        
+        // --- UI STATE ---
+        let currentListFilter = 'income'; // 'income' or 'expense'
+        let modalCategory = 'expense';
+        let modalFreq = 'monthly';
+        let editingId = null; // Wenn null, dann neuer Eintrag. Sonst ID des Eintrags.
 
-        loadData();
-        render();
+        // --- INIT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            updateDashboard();
+        });
 
-        function loadData() {
-            const savedExp = localStorage.getItem('expenses_v2');
-            const savedInc = localStorage.getItem('income_v2');
-
-            if (savedExp) expenses = JSON.parse(savedExp);
-            if (savedInc) {
-                income = parseFloat(savedInc);
-                document.getElementById('incomeInput').value = income;
-            }
+        // --- VIEW NAVIGATION ---
+        function goToDetails() {
+            document.getElementById('view-dashboard').classList.remove('active');
+            document.getElementById('view-details').classList.add('active');
+            renderList();
         }
 
-        function saveData() {
-            localStorage.setItem('expenses_v2', JSON.stringify(expenses));
-            localStorage.setItem('income_v2', income.toString());
+        function goToDashboard() {
+            document.getElementById('view-details').classList.remove('active');
+            document.getElementById('view-dashboard').classList.add('active');
+            updateDashboard();
         }
 
-        function render() {
-            const list = document.getElementById('expenseList');
+        function switchList(type) {
+            currentListFilter = type;
+            document.getElementById('seg-income').className = type === 'income' ? 'segment-btn active' : 'segment-btn';
+            document.getElementById('seg-expense').className = type === 'expense' ? 'segment-btn active' : 'segment-btn';
+            renderList();
+        }
+
+        // --- CORE LOGIC ---
+        function updateDashboard() {
+            let totalInc = 0;
+            let totalExp = 0;
+
+            entries.forEach(e => {
+                let monthlyAmount = e.freq === 'monthly' ? e.amount : e.amount / 12;
+                if (e.category === 'income') totalInc += monthlyAmount;
+                else totalExp += monthlyAmount;
+            });
+
+            const balance = totalInc - totalExp;
+
+            // Render Dashboard
+            const balEl = document.getElementById('mainBalance');
+            balEl.innerText = balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+            balEl.className = balance >= 0 ? 'balance-amount pos' : 'balance-amount neg';
+
+            document.getElementById('sumIncome').innerText = totalInc.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
+            document.getElementById('sumExpense').innerText = totalExp.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
+        }
+
+        function renderList() {
+            const list = document.getElementById('entryList');
             list.innerHTML = '';
             
-            let totalMonthlyDeduction = 0;
+            // Filter entries
+            const visibleEntries = entries.filter(e => e.category === currentListFilter);
 
-            expenses.forEach((item, index) => {
+            visibleEntries.forEach((e) => {
                 const li = document.createElement('li');
-                li.className = 'expense-item';
-
-                let monthlyCost = 0;
-                let subtext = '';
-
-                if (item.type === 'monthly') {
-                    monthlyCost = item.amount;
-                    subtext = 'monatlich';
-                } else {
-                    monthlyCost = item.amount / 12;
-                    subtext = `${item.amount.toLocaleString('de-DE')} € jährlich`;
+                li.className = 'entry-item';
+                
+                let val = e.amount;
+                let sub = e.freq === 'monthly' ? 'monatlich' : 'jährlich';
+                if (e.freq === 'yearly') {
+                    sub = `jährlich (${(e.amount/12).toFixed(2)} €/Mo)`;
                 }
 
-                totalMonthlyDeduction += monthlyCost;
-
                 li.innerHTML = `
-                    <div class="item-details">
-                        <span class="item-name">${item.name}</span>
-                        <span class="item-subtext">${subtext}</span>
+                    <div class="entry-details">
+                        <span class="entry-name">${e.name}</span>
+                        <span class="entry-sub">${sub}</span>
                     </div>
-                    <div class="item-right">
-                        <span class="item-price">- ${monthlyCost.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</span>
-                        <button class="delete-btn" onclick="deleteItem(${index})">✕</button>
+                    <div class="entry-right">
+                        <span class="entry-amount" style="color: ${e.category==='income'?'var(--accent-green)':'var(--text-primary)'}">
+                            ${e.amount.toLocaleString('de-DE')} €
+                        </span>
+                        <button class="action-btn" onclick="openModal(${e.id})">${ICON_EDIT}</button>
+                        <button class="action-btn" onclick="deleteItem(${e.id})">${ICON_TRASH}</button>
                     </div>
                 `;
                 list.appendChild(li);
             });
 
-            const balance = income - totalMonthlyDeduction;
-            const balDisplay = document.getElementById('balanceDisplay');
-            
-            balDisplay.innerText = balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-            
-            if (balance >= 0) {
-                balDisplay.classList.add('positive');
-                balDisplay.classList.remove('negative');
-            } else {
-                balDisplay.classList.add('negative');
-                balDisplay.classList.remove('positive');
+            if(visibleEntries.length === 0) {
+                list.innerHTML = `<div style="padding:20px; text-align:center; color:#8E8E93;">Keine Einträge vorhanden.</div>`;
             }
         }
 
-        function updateIncome() {
-            const val = document.getElementById('incomeInput').value;
-            income = val ? parseFloat(val.replace(',', '.')) : 0;
-            saveData();
-            render();
-        }
+        function saveEntry() {
+            const name = document.getElementById('inpName').value;
+            const amountStr = document.getElementById('inpAmount').value;
 
-        function addExpense() {
-            const name = document.getElementById('nameInput').value;
-            const amountStr = document.getElementById('amountInput').value;
-            
-            if (!name || !amountStr) {
-                alert("Bitte Name und Betrag eingeben");
-                return;
-            }
+            if(!name || !amountStr) return alert("Bitte alles ausfüllen");
 
             const amount = parseFloat(amountStr.replace(',', '.'));
 
-            expenses.push({
-                name: name,
-                amount: amount,
-                type: newType
-            });
+            if (editingId) {
+                // UPDATE
+                const index = entries.findIndex(e => e.id === editingId);
+                if(index > -1) {
+                    entries[index] = {
+                        id: editingId,
+                        name: name,
+                        amount: amount,
+                        category: modalCategory,
+                        freq: modalFreq
+                    };
+                }
+            } else {
+                // CREATE NEW
+                entries.push({
+                    id: Date.now(),
+                    name: name,
+                    amount: amount,
+                    category: modalCategory,
+                    freq: modalFreq
+                });
+            }
 
-            document.getElementById('nameInput').value = '';
-            document.getElementById('amountInput').value = '';
-            
             saveData();
-            render();
             closeModal();
+            
+            if(document.getElementById('view-details').classList.contains('active')) {
+                // Switch view to category of saved item to show it immediately
+                if(modalCategory !== currentListFilter) switchList(modalCategory);
+                else renderList();
+            } else {
+                updateDashboard();
+            }
         }
 
-        function deleteItem(index) {
-            expenses.splice(index, 1);
-            saveData();
-            render();
+        function deleteItem(id) {
+            if(confirm("Eintrag wirklich löschen?")) {
+                entries = entries.filter(e => e.id !== id);
+                saveData();
+                renderList();
+                updateDashboard();
+            }
         }
 
-        // --- BACKUP FUNKTIONEN ---
+        // --- MODAL LOGIC ---
+        function openModal(id = null) {
+            document.getElementById('modal').classList.add('open');
+            const title = document.getElementById('modalTitle');
+            const nameInp = document.getElementById('inpName');
+            const amtInp = document.getElementById('inpAmount');
+
+            if (id) {
+                // EDIT MODE
+                editingId = id;
+                title.innerText = "Eintrag bearbeiten";
+                const item = entries.find(e => e.id === id);
+                if(item) {
+                    nameInp.value = item.name;
+                    amtInp.value = item.amount;
+                    setModalCategory(item.category);
+                    setFrequency(item.freq);
+                }
+            } else {
+                // NEW MODE
+                editingId = null;
+                title.innerText = "Neuer Eintrag";
+                nameInp.value = '';
+                amtInp.value = '';
+                // Set default based on current view
+                if(document.getElementById('view-details').classList.contains('active')) {
+                    setModalCategory(currentListFilter);
+                } else {
+                    setModalCategory('expense'); // Default dashboard
+                }
+                setFrequency('monthly');
+            }
+            nameInp.focus();
+        }
+
+        function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+        function setModalCategory(cat) {
+            modalCategory = cat;
+            const incBtn = document.getElementById('opt-income');
+            const expBtn = document.getElementById('opt-expense');
+            
+            incBtn.className = 'cat-opt';
+            expBtn.className = 'cat-opt';
+
+            if(cat === 'income') incBtn.classList.add('active-inc');
+            else expBtn.classList.add('active-exp');
+        }
+
+        function setFrequency(freq) {
+            modalFreq = freq;
+            const mBtn = document.getElementById('freq-monthly');
+            const yBtn = document.getElementById('freq-yearly');
+
+            mBtn.style.background = freq === 'monthly' ? '#636366' : 'transparent';
+            mBtn.style.color = freq === 'monthly' ? 'white' : '#8E8E93';
+            
+            yBtn.style.background = freq === 'yearly' ? '#636366' : 'transparent';
+            yBtn.style.color = freq === 'yearly' ? 'white' : '#8E8E93';
+        }
+
+        // --- BACKUP / STORAGE ---
+        function saveData() {
+            localStorage.setItem('finApp_entries_v4', JSON.stringify(entries));
+        }
+
+        function loadData() {
+            const raw = localStorage.getItem('finApp_entries_v4');
+            // Try load old data if new not exists
+            if(!raw) {
+                const old = localStorage.getItem('finApp_entries');
+                if(old) entries = JSON.parse(old);
+            } else {
+                entries = JSON.parse(raw);
+            }
+        }
 
         function exportData() {
-            const data = {
-                expenses: expenses,
-                income: income
-            };
-            const jsonStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonStr], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries));
             const a = document.createElement('a');
-            a.href = url;
-            const date = new Date().toISOString().slice(0,10);
-            a.download = `budget_backup_${date}.json`;
+            a.setAttribute("href", dataStr);
+            const d = new Date().toISOString().slice(0,10);
+            a.setAttribute("download", `finanzen_backup_${d}.json`);
             document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
+            a.remove();
         }
 
         function importData(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        if (confirm('Achtung: Dadurch werden alle aktuellen Daten mit dem Backup überschrieben. Fortfahren?')) {
-                            if (data.expenses && data.income !== undefined) {
-                                expenses = data.expenses;
-                                income = data.income;
-                                document.getElementById('incomeInput').value = income;
-                                saveData();
-                                render();
-                                alert('Backup erfolgreich geladen!');
-                            } else {
-                                alert('Fehler: Ungültige Backup-Datei.');
-                            }
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const loaded = JSON.parse(e.target.result);
+                    if(Array.isArray(loaded)) {
+                        if(confirm("Alle aktuellen Daten werden überschrieben. Fortfahren?")) {
+                            entries = loaded;
+                            saveData();
+                            updateDashboard();
+                            alert("Daten erfolgreich geladen!");
                         }
-                    } catch (error) {
-                        alert('Fehler beim Lesen der Datei.');
+                    } else {
+                        alert("Format falsch.");
                     }
-                    // Reset input so same file can be selected again if needed
-                    input.value = ''; 
-                };
-                reader.readAsText(input.files[0]);
-            }
+                } catch(err) { alert("Fehler beim Laden."); }
+            };
+            reader.readAsText(file);
+            input.value = ''; // Reset input
         }
-
-        // --- UI ---
-
-        function openModal() {
-            document.getElementById('modal').classList.add('open');
-            document.getElementById('nameInput').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('open');
-        }
-
-        function setType(type) {
-            newType = type;
-            const mBtn = document.getElementById('btnMonthly');
-            const yBtn = document.getElementById('btnYearly');
-            
-            if (type === 'monthly') {
-                mBtn.classList.add('active');
-                yBtn.classList.remove('active');
-            } else {
-                mBtn.classList.remove('active');
-                yBtn.classList.add('active');
-            }
-        }
-
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') closeModal();
-        });
-
     </script>
 </body>
 </html>
