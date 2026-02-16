@@ -37,10 +37,11 @@
             padding: 0;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            min-height: 100vh;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Verhindert Scrollen der ganzen Seite */
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
         }
 
         /* --- VIEWS --- */
@@ -48,47 +49,46 @@
             display: none;
             flex-direction: column;
             height: 100%;
-            flex: 1;
-            animation: fadeIn 0.3s ease;
+            width: 100%;
+            animation: fadeIn 0.2s ease;
         }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- HEADER --- */
+        /* --- HEADER (FEST) --- */
         header {
+            flex-shrink: 0; /* Darf nicht schrumpfen */
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(20px);
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            background: rgba(28, 28, 30, 0.95); /* Fast undurchsichtig */
             border-bottom: 0.5px solid rgba(255,255,255,0.1);
+            z-index: 10;
         }
         h1 { font-size: 20px; font-weight: 600; margin: 0; }
         .header-btn {
             background: none; border: none; color: var(--accent-blue);
             font-size: 17px; cursor: pointer; padding: 5px;
         }
-        .header-icon { font-size: 28px; line-height: 1; }
 
-        /* --- DASHBOARD --- */
+        /* --- DASHBOARD CONTENT --- */
         .dashboard-content {
-            padding: 20px;
             flex: 1;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: center; /* Alles mittig */
+            overflow-y: auto; /* Falls Bildschirme sehr klein sind */
         }
+        
         .balance-container { text-align: center; margin-bottom: 40px; }
         .balance-label {
             color: var(--text-secondary); font-size: 13px; text-transform: uppercase;
             letter-spacing: 1px; margin-bottom: 10px;
         }
         .balance-amount {
-            font-size: 38px; font-weight: 700; letter-spacing: -0.5px;
+            font-size: 42px; font-weight: 700; letter-spacing: -0.5px;
         }
         .balance-amount.pos { color: var(--accent-green); }
         .balance-amount.neg { color: var(--accent-red); }
@@ -105,102 +105,108 @@
         .sum-val.exp { color: var(--accent-red); }
 
         .nav-btn {
-            margin-top: 40px; background-color: #2C2C2E; color: white; border: none;
-            padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 500;
+            margin-top: 50px; background-color: #2C2C2E; color: white; border: none;
+            padding: 18px; border-radius: 14px; font-size: 17px; font-weight: 500;
             display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%;
         }
-        .nav-arrow { color: var(--text-secondary); }
 
         .backup-area {
             margin-top: auto; padding-top: 40px; display: flex; justify-content: center; gap: 20px;
+            padding-bottom: 20px;
         }
         .backup-link {
             font-size: 13px; color: #48484A; background: none; border: none; cursor: pointer;
         }
 
-        /* --- LIST VIEW --- */
-        .segmented-control {
-            display: flex; background-color: #1C1C1E; padding: 2px; border-radius: 9px; margin: 10px 20px 20px 20px;
-        }
-        .segment-btn {
-            flex: 1; padding: 6px; text-align: center; font-size: 13px; font-weight: 500;
-            border-radius: 7px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s;
-        }
-        .segment-btn.active {
-            background-color: #636366; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        /* --- LIST VIEW (SCROLLBAR) --- */
+        .list-container { 
+            flex: 1; 
+            overflow-y: scroll; /* Hier wird gescrollt */
+            padding: 0 20px 20px 20px;
+            -webkit-overflow-scrolling: touch; /* Weiches Scrollen auf iOS */
         }
 
-        .list-container { padding: 0 20px; flex: 1; overflow-y: auto; padding-bottom: 80px; }
-        .entry-list { background-color: var(--card-bg); border-radius: 12px; list-style: none; padding: 0; margin: 0; }
+        .entry-list { 
+            list-style: none; padding: 0; margin: 0; 
+            margin-top: 20px;
+        }
         
         .entry-item {
+            background-color: var(--card-bg);
+            margin-bottom: 12px; /* Karten-Look statt Liste */
+            border-radius: 12px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 16px; position: relative;
-        }
-        .entry-item:not(:last-child)::after {
-            content: ''; position: absolute; bottom: 0; right: 0; left: 16px;
-            height: 0.5px; background-color: var(--separator);
+            padding: 16px;
         }
         
         .entry-left { display: flex; flex-direction: column; flex: 1; }
-        .entry-date { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;}
-        .entry-name { font-size: 16px; color: white; font-weight: 500;}
-        .entry-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px;}
+        .entry-date { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .entry-name { font-size: 17px; color: white; font-weight: 600;}
+        .entry-sub { font-size: 13px; color: var(--text-secondary); margin-top: 2px;}
 
-        .entry-right { display: flex; align-items: center; gap: 8px; }
-        .entry-amount { font-size: 16px; font-weight: 600; margin-right: 5px; }
+        .entry-right { display: flex; align-items: center; gap: 10px; }
+        .entry-amount { font-size: 17px; font-weight: 600; margin-right: 5px; }
         
         .action-btn {
-            background: none; border: none; padding: 8px; cursor: pointer;
-            color: var(--text-secondary); opacity: 0.6; display: flex;
+            background: #2C2C2E; border: none; padding: 8px; cursor: pointer;
+            color: var(--text-secondary); border-radius: 8px; display: flex;
         }
-        .action-btn:active { opacity: 1; color: white; }
-        .action-btn svg { width: 18px; height: 18px; }
+        .action-btn:active { background: #3A3A3C; color: white; }
+        .action-btn svg { width: 16px; height: 16px; }
 
-        /* --- MODAL --- */
+        /* --- MODAL (MITTIG & FEST) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-            z-index: 100; display: none; justify-content: center; align-items: flex-end;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            z-index: 100; display: none; 
+            justify-content: center; /* Horizontal mittig */
+            align-items: center; /* Vertikal mittig */
         }
         .modal-overlay.open { display: flex; }
         
-        .modal-sheet {
-            background-color: #1C1C1E; width: 100%; max-width: 600px;
-            border-radius: 20px 20px 0 0; padding: 20px;
-            animation: slideUp 0.3s; padding-bottom: max(20px, env(safe-area-inset-bottom));
+        .modal-box {
+            background-color: #1C1C1E; 
+            width: 85%; max-width: 350px;
+            border-radius: 20px; 
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; gap: 12px;
         }
-        @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
 
-        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 10px; }
+        
         .modal-input {
             width: 100%; background-color: var(--input-bg); border: none;
-            border-radius: 10px; padding: 14px; font-size: 17px; color: white;
-            outline: none; margin-bottom: 12px;
+            border-radius: 10px; padding: 14px; font-size: 16px; color: white;
+            outline: none; text-align: center;
         }
-        /* Date Input adjustments for iOS */
-        input[type="date"] {
-            font-family: -apple-system, sans-serif;
-            min-height: 50px;
-        }
-        
+
+        /* Schalter im Modal */
         .cat-switch {
-            display: flex; background: var(--input-bg); border-radius: 8px; padding: 3px; margin-bottom: 15px;
+            display: flex; background: var(--input-bg); border-radius: 10px; padding: 4px;
         }
         .cat-opt {
-            flex: 1; text-align: center; padding: 8px; font-size: 13px;
-            border-radius: 6px; color: var(--text-secondary); cursor: pointer; transition: 0.2s;
+            flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 500;
+            border-radius: 8px; color: var(--text-secondary); cursor: pointer; transition: 0.2s;
         }
-        /* Colors for Category */
-        .cat-opt.active-inc { background: var(--accent-green); color: black; font-weight: 600; }
-        .cat-opt.active-exp { background: var(--accent-red); color: white; font-weight: 600; }
-        /* Colors for Frequency */
-        .cat-opt.active-freq { background: #636366; color: white; font-weight: 600; }
+        .cat-opt.active-inc { background: var(--accent-green); color: black; box-shadow: 0 2px 10px rgba(48, 209, 88, 0.3); }
+        .cat-opt.active-exp { background: var(--accent-red); color: white; box-shadow: 0 2px 10px rgba(255, 69, 58, 0.3); }
+        .cat-opt.active-freq { background: #636366; color: white; }
 
-        .save-btn {
-            width: 100%; background-color: var(--accent-blue); color: white;
-            border: none; border-radius: 12px; padding: 16px; 
-            font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 10px;
+        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-cancel {
+            flex: 1; background: none; border: 1px solid #3A3A3C; color: var(--text-secondary);
+            padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600;
+        }
+        .btn-save {
+            flex: 2; background-color: var(--accent-blue); color: white;
+            border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600;
         }
 
     </style>
@@ -210,7 +216,7 @@
     <div id="view-dashboard" class="view active">
         <header>
             <h1>Mein Budget</h1>
-            <button class="header-btn header-icon" onclick="openModal()">+</button>
+            <button class="header-btn" onclick="openModal()" style="font-size: 28px;">+</button>
         </header>
 
         <div class="dashboard-content">
@@ -231,12 +237,12 @@
             </div>
 
             <button class="nav-btn" onclick="goToDetails()">
-                <span>Alle Einträge ansehen</span>
+                <span>Alle Buchungen anzeigen</span>
                 <span class="nav-arrow">›</span>
             </button>
 
             <div class="backup-area">
-                <button class="backup-link" onclick="exportData()">↓ Backup</button>
+                <button class="backup-link" onclick="exportData()">↓ Sicherung</button>
                 <button class="backup-link" onclick="document.getElementById('fileInput').click()">↑ Laden</button>
             </div>
             <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="importData(this)">
@@ -246,45 +252,41 @@
     <div id="view-details" class="view">
         <header>
             <button class="header-btn" onclick="goToDashboard()">‹ Zurück</button>
-            <h1>Einträge</h1>
-            <button class="header-btn header-icon" onclick="openModal()">+</button>
+            <h1>Buchungen</h1>
+            <button class="header-btn" onclick="openModal()" style="font-size: 28px;">+</button>
         </header>
-
-        <div class="segmented-control">
-            <div class="segment-btn active" id="seg-income" onclick="switchList('income')">Einnahmen</div>
-            <div class="segment-btn" id="seg-expense" onclick="switchList('expense')">Ausgaben</div>
-        </div>
 
         <div class="list-container">
             <ul class="entry-list" id="entryList">
                 </ul>
-        </div>
+            <div style="height: 50px;"></div> </div>
     </div>
 
     <div class="modal-overlay" id="modal">
-        <div class="modal-sheet">
-            <div class="modal-header">
-                <button class="header-btn" onclick="closeModal()">Abbrechen</button>
-                <span style="font-weight: 600;" id="modalTitle">Eintrag</span>
-                <span style="width: 50px;"></span>
-            </div>
+        <div class="modal-box">
+            <div class="modal-title" id="modalTitle">Neuer Eintrag</div>
 
             <div class="cat-switch">
-                <div class="cat-opt" id="opt-income" onclick="setModalCategory('income')">Einnahme</div>
                 <div class="cat-opt" id="opt-expense" onclick="setModalCategory('expense')">Ausgabe</div>
+                <div class="cat-opt" id="opt-income" onclick="setModalCategory('income')">Einnahme</div>
             </div>
 
-            <input type="text" class="modal-input" id="inpName" placeholder="Name (z.B. Einkauf)">
-            <input type="number" class="modal-input" id="inpAmount" placeholder="Betrag (z.B. 45.90)" inputmode="decimal">
+            <input type="text" class="modal-input" id="inpName" placeholder="Bezeichnung">
+            <input type="number" class="modal-input" id="inpAmount" placeholder="Betrag" inputmode="decimal">
             <input type="date" class="modal-input" id="inpDate">
 
-            <div class="cat-switch" style="background: #2C2C2E;">
-                <div class="cat-opt" id="freq-monthly" onclick="setFrequency('monthly')">Monatlich</div>
-                <div class="cat-opt" id="freq-yearly" onclick="setFrequency('yearly')">Jährlich</div>
-                <div class="cat-opt" id="freq-onetime" onclick="setFrequency('onetime')">Einmalig</div>
+            <div class="cat-switch" style="background: transparent; gap: 5px;">
+                <div class="cat-opt" id="freq-monthly" onclick="setFrequency('monthly')" style="background: #2C2C2E;">Monatlich</div>
+                <div class="cat-opt" id="freq-yearly" onclick="setFrequency('yearly')" style="background: #2C2C2E;">Jährlich</div>
+            </div>
+            <div class="cat-switch" style="background: transparent;">
+                 <div class="cat-opt" id="freq-onetime" onclick="setFrequency('onetime')" style="background: #2C2C2E;">Einmalig</div>
             </div>
 
-            <button class="save-btn" onclick="saveEntry()">Speichern</button>
+            <div class="btn-row">
+                <button class="btn-cancel" onclick="closeModal()">Abbrechen</button>
+                <button class="btn-save" onclick="saveEntry()">Speichern</button>
+            </div>
         </div>
     </div>
 
@@ -293,11 +295,7 @@
         const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
         const ICON_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
 
-        // Data: [ { id, name, amount, date, category, freq } ]
         let entries = [];
-        
-        // State
-        let currentListFilter = 'income'; 
         let modalCategory = 'expense';
         let modalFreq = 'monthly';
         let editingId = null; 
@@ -306,8 +304,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
             updateDashboard();
-            
-            // Set today as default date value
             document.getElementById('inpDate').valueAsDate = new Date();
         });
 
@@ -324,20 +320,13 @@
             updateDashboard();
         }
 
-        function switchList(type) {
-            currentListFilter = type;
-            document.getElementById('seg-income').className = type === 'income' ? 'segment-btn active' : 'segment-btn';
-            document.getElementById('seg-expense').className = type === 'expense' ? 'segment-btn active' : 'segment-btn';
-            renderList();
-        }
-
         // Logic
         function updateDashboard() {
             let totalInc = 0;
             let totalExp = 0;
 
             entries.forEach(e => {
-                // Nur wiederkehrende Einträge für das monatliche Budget berechnen
+                // Nur Fixkosten für Dashboard berechnen
                 if (e.freq === 'monthly') {
                     if (e.category === 'income') totalInc += e.amount;
                     else totalExp += e.amount;
@@ -345,11 +334,9 @@
                     if (e.category === 'income') totalInc += (e.amount / 12);
                     else totalExp += (e.amount / 12);
                 }
-                // Einmalige (onetime) werden hier ignoriert, da sie das monatliche Fix-Budget nicht verändern sollen
             });
 
             const balance = totalInc - totalExp;
-
             const balEl = document.getElementById('mainBalance');
             balEl.innerText = balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
             balEl.className = balance >= 0 ? 'balance-amount pos' : 'balance-amount neg';
@@ -362,25 +349,31 @@
             const list = document.getElementById('entryList');
             list.innerHTML = '';
             
-            // Filter nach Kategorie
-            let visibleEntries = entries.filter(e => e.category === currentListFilter);
+            // Alles anzeigen, sortiert nach Datum
+            let sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            // Sortieren nach Datum (Neueste oben)
-            visibleEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            visibleEntries.forEach((e) => {
+            sortedEntries.forEach((e) => {
                 const li = document.createElement('li');
                 li.className = 'entry-item';
                 
-                // Datum formatieren
                 let dateObj = new Date(e.date);
-                let dateStr = isNaN(dateObj) ? 'Kein Datum' : dateObj.toLocaleDateString('de-DE', {day: '2-digit', month:'2-digit', year:'2-digit'});
+                let dateStr = isNaN(dateObj) ? '---' : dateObj.toLocaleDateString('de-DE', {day: '2-digit', month:'2-digit', year:'2-digit'});
 
-                // Untertitel Logik
                 let sub = '';
                 if(e.freq === 'monthly') sub = 'Monatlich';
                 else if(e.freq === 'yearly') sub = 'Jährlich';
                 else sub = 'Einmalig';
+
+                // Farben & Vorzeichen
+                let colorClass = '';
+                let prefix = '';
+                if (e.category === 'income') {
+                    colorClass = 'var(--accent-green)';
+                    prefix = '+';
+                } else {
+                    colorClass = 'var(--accent-red)';
+                    prefix = '-';
+                }
 
                 li.innerHTML = `
                     <div class="entry-left">
@@ -389,8 +382,8 @@
                         <span class="entry-sub">${sub}</span>
                     </div>
                     <div class="entry-right">
-                        <span class="entry-amount" style="color: ${e.category==='income'?'var(--accent-green)':'var(--text-primary)'}">
-                            ${e.amount.toLocaleString('de-DE', {minimumFractionDigits: 2})} €
+                        <span class="entry-amount" style="color: ${colorClass}">
+                            ${prefix} ${e.amount.toLocaleString('de-DE', {minimumFractionDigits: 2})} €
                         </span>
                         <button class="action-btn" onclick="openModal(${e.id})">${ICON_EDIT}</button>
                         <button class="action-btn" onclick="deleteItem(${e.id})">${ICON_TRASH}</button>
@@ -399,8 +392,8 @@
                 list.appendChild(li);
             });
 
-            if(visibleEntries.length === 0) {
-                list.innerHTML = `<div style="padding:40px; text-align:center; color:#8E8E93;">Keine Einträge.</div>`;
+            if(sortedEntries.length === 0) {
+                list.innerHTML = `<div style="padding:40px; text-align:center; color:#8E8E93;">Keine Einträge vorhanden.</div>`;
             }
         }
 
@@ -433,15 +426,14 @@
             closeModal();
             
             if(document.getElementById('view-details').classList.contains('active')) {
-                if(modalCategory !== currentListFilter) switchList(modalCategory);
-                else renderList();
+                renderList();
             } else {
                 updateDashboard();
             }
         }
 
         function deleteItem(id) {
-            if(confirm("Diesen Eintrag löschen?")) {
+            if(confirm("Löschen?")) {
                 entries = entries.filter(e => e.id !== id);
                 saveData();
                 renderList();
@@ -455,7 +447,6 @@
             const title = document.getElementById('modalTitle');
             
             if (id) {
-                // Edit
                 editingId = id;
                 title.innerText = "Bearbeiten";
                 const item = entries.find(e => e.id === id);
@@ -467,20 +458,13 @@
                     setFrequency(item.freq);
                 }
             } else {
-                // New
                 editingId = null;
-                title.innerText = "Neu";
+                title.innerText = "Neuer Eintrag";
                 document.getElementById('inpName').value = '';
                 document.getElementById('inpAmount').value = '';
                 document.getElementById('inpDate').valueAsDate = new Date();
-                
-                // Defaults
-                if(document.getElementById('view-details').classList.contains('active')) {
-                    setModalCategory(currentListFilter);
-                } else {
-                    setModalCategory('expense');
-                }
-                setFrequency('monthly');
+                setModalCategory('expense');
+                setFrequency('onetime'); // Standard für schnelle Einträge
                 document.getElementById('inpName').focus();
             }
         }
@@ -491,8 +475,13 @@
             modalCategory = cat;
             const incBtn = document.getElementById('opt-income');
             const expBtn = document.getElementById('opt-expense');
-            incBtn.className = cat === 'income' ? 'cat-opt active-inc' : 'cat-opt';
-            expBtn.className = cat === 'expense' ? 'cat-opt active-exp' : 'cat-opt';
+            
+            // Reset
+            incBtn.className = 'cat-opt';
+            expBtn.className = 'cat-opt';
+            
+            if(cat === 'income') incBtn.classList.add('active-inc');
+            else expBtn.classList.add('active-exp');
         }
 
         function setFrequency(freq) {
@@ -503,16 +492,16 @@
         }
 
         // --- BACKUP ---
-        function saveData() { localStorage.setItem('finApp_v5', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v6', JSON.stringify(entries)); }
         
         function loadData() {
-            const raw = localStorage.getItem('finApp_v5');
-            // Try to load old versions if v5 doesn't exist
+            const raw = localStorage.getItem('finApp_v6');
             if(!raw) {
-                const v4 = localStorage.getItem('finApp_entries_v4');
-                if(v4) {
-                    entries = JSON.parse(v4).map(e => ({...e, date: new Date().toISOString().split('T')[0]})); // Add dummy date
-                    saveData(); // Upgrade data
+                // Migration von v5
+                const v5 = localStorage.getItem('finApp_v5');
+                if(v5) {
+                    entries = JSON.parse(v5);
+                    saveData();
                 }
             } else {
                 entries = JSON.parse(raw);
@@ -524,7 +513,7 @@
             const a = document.createElement('a');
             a.setAttribute("href", dataStr);
             const d = new Date().toISOString().slice(0,10);
-            a.setAttribute("download", `finanz_backup_${d}.json`);
+            a.setAttribute("download", `finanzen_backup_${d}.json`);
             document.body.appendChild(a);
             a.click();
             a.remove();
@@ -538,14 +527,14 @@
                 try {
                     const loaded = JSON.parse(e.target.result);
                     if(Array.isArray(loaded)) {
-                        if(confirm("Achtung: Überschreibt aktuelle Daten!")) {
+                        if(confirm("Daten überschreiben?")) {
                             entries = loaded;
                             saveData();
                             updateDashboard();
-                            alert("Geladen!");
+                            alert("OK");
                         }
                     }
-                } catch(err) { alert("Fehler."); }
+                } catch(err) { alert("Fehler"); }
             };
             reader.readAsText(file);
             input.value = '';
