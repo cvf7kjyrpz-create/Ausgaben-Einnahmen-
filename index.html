@@ -67,7 +67,8 @@
         
         .header-btn {
             background: none; border: none; color: var(--accent-blue);
-            font-size: 24px; cursor: pointer; padding: 0; display: flex;
+            font-size: 28px; cursor: pointer; padding: 0; display: flex;
+            line-height: 1;
         }
         
         .backup-btn {
@@ -240,12 +241,14 @@
         <header>
             <h1>Übersicht</h1>
             <div class="header-actions">
-                <button class="backup-btn" onclick="exportData()">
+                <button class="backup-btn" onclick="exportData()" title="Backup speichern">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 </button>
-                <button class="backup-btn" onclick="document.getElementById('fileInput').click()">
+                <button class="backup-btn" onclick="document.getElementById('fileInput').click()" title="Backup laden">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 </button>
+                
+                <button class="header-btn" onclick="openModal()">+</button>
             </div>
         </header>
 
@@ -581,12 +584,12 @@
             });
         }
 
-        function saveData() { localStorage.setItem('finApp_v15', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v16', JSON.stringify(entries)); }
         function loadData() {
-            const raw = localStorage.getItem('finApp_v15');
+            const raw = localStorage.getItem('finApp_v16');
             if(!raw) {
-                const v14 = localStorage.getItem('finApp_v14');
-                if(v14) { entries = JSON.parse(v14); saveData(); }
+                const v15 = localStorage.getItem('finApp_v15');
+                if(v15) { entries = JSON.parse(v15); saveData(); }
             } else { entries = JSON.parse(raw); }
         }
         function exportData() {
