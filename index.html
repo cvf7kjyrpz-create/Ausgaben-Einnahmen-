@@ -39,7 +39,7 @@
             padding-bottom: env(safe-area-inset-bottom);
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* Verhindert Scrollen der ganzen Seite */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
@@ -57,12 +57,12 @@
 
         /* --- HEADER (FEST) --- */
         header {
-            flex-shrink: 0; /* Darf nicht schrumpfen */
+            flex-shrink: 0;
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(28, 28, 30, 0.95); /* Fast undurchsichtig */
+            background: rgba(28, 28, 30, 0.95);
             border-bottom: 0.5px solid rgba(255,255,255,0.1);
             z-index: 10;
         }
@@ -78,20 +78,23 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Alles mittig */
-            overflow-y: auto; /* Falls Bildschirme sehr klein sind */
+            justify-content: center;
+            overflow-y: auto;
         }
         
         .balance-container { text-align: center; margin-bottom: 40px; }
         .balance-label {
             color: var(--text-secondary); font-size: 13px; text-transform: uppercase;
-            letter-spacing: 1px; margin-bottom: 10px;
+            letter-spacing: 1px; margin-bottom: 12px;
         }
+        
+        /* Dezent und grau, etwas kleiner */
         .balance-amount {
-            font-size: 42px; font-weight: 700; letter-spacing: -0.5px;
+            font-size: 34px; 
+            font-weight: 600; 
+            letter-spacing: -0.5px;
+            color: #D1D1D6; /* Helles Grau statt Weiß/Bunt */
         }
-        .balance-amount.pos { color: var(--accent-green); }
-        .balance-amount.neg { color: var(--accent-red); }
 
         .summary-row {
             display: flex; justify-content: space-around; margin-top: 30px;
@@ -121,9 +124,9 @@
         /* --- LIST VIEW (SCROLLBAR) --- */
         .list-container { 
             flex: 1; 
-            overflow-y: scroll; /* Hier wird gescrollt */
+            overflow-y: scroll; 
             padding: 0 20px 20px 20px;
-            -webkit-overflow-scrolling: touch; /* Weiches Scrollen auf iOS */
+            -webkit-overflow-scrolling: touch; 
         }
 
         .entry-list { 
@@ -133,7 +136,7 @@
         
         .entry-item {
             background-color: var(--card-bg);
-            margin-bottom: 12px; /* Karten-Look statt Liste */
+            margin-bottom: 12px;
             border-radius: 12px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 16px;
@@ -159,8 +162,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
             z-index: 100; display: none; 
-            justify-content: center; /* Horizontal mittig */
-            align-items: center; /* Vertikal mittig */
+            justify-content: center; align-items: center; 
         }
         .modal-overlay.open { display: flex; }
         
@@ -181,10 +183,20 @@
 
         .modal-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 10px; }
         
+        /* Input Styling Fix */
         .modal-input {
-            width: 100%; background-color: var(--input-bg); border: none;
-            border-radius: 10px; padding: 14px; font-size: 16px; color: white;
-            outline: none; text-align: center;
+            width: 100%; 
+            background-color: var(--input-bg); 
+            border: none;
+            border-radius: 10px; 
+            padding: 14px; 
+            font-size: 16px; 
+            color: white;
+            outline: none; 
+            text-align: center;
+            /* Wichtig für iOS Datum Fix */
+            min-height: 48px;
+            font-family: inherit;
         }
 
         /* Schalter im Modal */
@@ -259,7 +271,8 @@
         <div class="list-container">
             <ul class="entry-list" id="entryList">
                 </ul>
-            <div style="height: 50px;"></div> </div>
+            <div style="height: 50px;"></div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="modal">
@@ -326,7 +339,6 @@
             let totalExp = 0;
 
             entries.forEach(e => {
-                // Nur Fixkosten für Dashboard berechnen
                 if (e.freq === 'monthly') {
                     if (e.category === 'income') totalInc += e.amount;
                     else totalExp += e.amount;
@@ -338,8 +350,15 @@
 
             const balance = totalInc - totalExp;
             const balEl = document.getElementById('mainBalance');
-            balEl.innerText = balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-            balEl.className = balance >= 0 ? 'balance-amount pos' : 'balance-amount neg';
+            
+            // Formatierung: Grau, nur Minus davor, wenn negativ
+            let displayString = balance.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+            
+            if (balance < 0) {
+                balEl.innerText = "- " + Math.abs(balance).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+            } else {
+                balEl.innerText = displayString;
+            }
 
             document.getElementById('sumIncome').innerText = totalInc.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
             document.getElementById('sumExpense').innerText = totalExp.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
@@ -349,7 +368,7 @@
             const list = document.getElementById('entryList');
             list.innerHTML = '';
             
-            // Alles anzeigen, sortiert nach Datum
+            // Sortierung: Chronologisch (Neueste zuerst)
             let sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
             sortedEntries.forEach((e) => {
@@ -364,7 +383,6 @@
                 else if(e.freq === 'yearly') sub = 'Jährlich';
                 else sub = 'Einmalig';
 
-                // Farben & Vorzeichen
                 let colorClass = '';
                 let prefix = '';
                 if (e.category === 'income') {
@@ -464,7 +482,7 @@
                 document.getElementById('inpAmount').value = '';
                 document.getElementById('inpDate').valueAsDate = new Date();
                 setModalCategory('expense');
-                setFrequency('onetime'); // Standard für schnelle Einträge
+                setFrequency('onetime');
                 document.getElementById('inpName').focus();
             }
         }
@@ -476,7 +494,6 @@
             const incBtn = document.getElementById('opt-income');
             const expBtn = document.getElementById('opt-expense');
             
-            // Reset
             incBtn.className = 'cat-opt';
             expBtn.className = 'cat-opt';
             
@@ -492,15 +509,14 @@
         }
 
         // --- BACKUP ---
-        function saveData() { localStorage.setItem('finApp_v6', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v7', JSON.stringify(entries)); }
         
         function loadData() {
-            const raw = localStorage.getItem('finApp_v6');
+            const raw = localStorage.getItem('finApp_v7');
             if(!raw) {
-                // Migration von v5
-                const v5 = localStorage.getItem('finApp_v5');
-                if(v5) {
-                    entries = JSON.parse(v5);
+                const v6 = localStorage.getItem('finApp_v6');
+                if(v6) {
+                    entries = JSON.parse(v6);
                     saveData();
                 }
             } else {
