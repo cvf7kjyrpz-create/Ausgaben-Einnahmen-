@@ -24,6 +24,7 @@
             --accent-yellow: #FFD60A;
             --separator: #38383A;
             --input-bg: #2C2C2E;
+            --tab-bar-bg: rgba(28, 28, 30, 0.95);
         }
 
         * {
@@ -37,7 +38,6 @@
             color: var(--text-primary);
             margin: 0; padding: 0;
             padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
             height: 100vh; width: 100vw;
             overflow: hidden;
             display: flex; flex-direction: column;
@@ -47,6 +47,7 @@
         .view {
             display: none; flex-direction: column; height: 100%; width: 100%;
             animation: fadeIn 0.2s ease;
+            padding-bottom: 85px; /* Platz für Tabbar */
         }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -75,65 +76,53 @@
         }
         .backup-btn svg { width: 22px; height: 22px; }
 
-        /* --- DASHBOARD --- */
-        .dashboard-content {
+        /* --- CONTENT SCROLL AREA --- */
+        .content-scroll {
             flex: 1; padding: 0;
             display: flex; flex-direction: column;
             overflow-y: scroll; -webkit-overflow-scrolling: touch;
         }
-        
-        /* Balance Area */
+
+        /* --- DASHBOARD STYLES --- */
         .balance-section {
-            padding: 30px 20px 10px 20px;
-            text-align: center;
-            flex-shrink: 0;
+            padding: 40px 20px 20px 20px;
+            text-align: center; flex-shrink: 0;
         }
         .balance-label {
             color: var(--text-secondary); font-size: 12px; text-transform: uppercase;
             letter-spacing: 1px; margin-bottom: 8px;
         }
         .balance-amount {
-            font-size: 36px; font-weight: 600; letter-spacing: -0.5px; color: var(--text-gray);
+            font-size: 40px; font-weight: 600; letter-spacing: -0.5px; color: var(--text-gray);
         }
 
-        /* Stats Container */
         .stats-container {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            margin: 20px 16px;
-            padding: 16px;
+            border-radius: 12px; margin: 20px 16px; padding: 16px;
         }
 
         .summary-row {
             display: flex; justify-content: space-around;
-            padding-bottom: 15px;
-            border-bottom: 0.5px solid var(--separator);
+            padding-bottom: 15px; border-bottom: 0.5px solid var(--separator);
         }
         .summary-item { text-align: center; }
         .sum-label {
             font-size: 11px; color: var(--text-secondary); text-transform: uppercase; 
             letter-spacing: 0.5px; margin-bottom: 4px; display: block;
         }
-        .sum-val {
-            font-size: 16px; font-weight: 600; color: var(--text-gray);
-        }
+        .sum-val { font-size: 16px; font-weight: 600; color: var(--text-gray); }
 
-        /* Interval Stats (Neu) */
         .interval-row {
-            display: flex; justify-content: space-between;
-            padding-top: 15px;
+            display: flex; justify-content: space-between; padding-top: 15px;
         }
         .interval-item { text-align: center; flex: 1; }
         .int-label {
             font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; display: block; text-transform: uppercase;
         }
-        .int-val {
-            font-size: 15px; font-weight: 500; color: var(--text-gray);
-        }
+        .int-val { font-size: 15px; font-weight: 500; color: var(--text-gray); }
 
-
-        /* Fixed Cost Groups */
-        .group-container { padding: 0 16px 40px 16px; }
+        /* --- LIST VIEW STYLES (GROUPED) --- */
+        .group-container { padding: 0 16px 20px 16px; }
         
         .group-header {
             color: var(--text-secondary);
@@ -148,50 +137,46 @@
 
         .group-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 16px; position: relative;
+            padding: 12px 16px; position: relative;
         }
         .group-item:not(:last-child)::after {
             content: ''; position: absolute; bottom: 0; right: 0; left: 16px;
             height: 0.5px; background-color: var(--separator);
         }
 
-        .g-name { font-size: 16px; font-weight: 500; color: white; display: flex; align-items: center; gap: 6px; }
-        .g-amount { font-size: 16px; color: var(--text-gray); font-weight: 400; }
-        .g-amount.inc { color: var(--accent-green); }
-        .g-amount.exp { color: var(--text-primary); }
+        .entry-left { display: flex; flex-direction: column; }
+        .entry-name { font-size: 16px; font-weight: 500; color: white; display: flex; align-items: center; gap: 6px; }
+        .entry-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 
-        .reminder-dot { color: var(--accent-yellow); font-size: 14px; }
+        .entry-right { display: flex; align-items: center; gap: 10px; }
+        .entry-amount { font-size: 16px; font-weight: 400; margin-right: 5px; }
+        .entry-amount.inc { color: var(--accent-green); }
+        .entry-amount.exp { color: var(--text-primary); }
 
-        .nav-btn-container { padding: 0 16px 20px 16px; margin-top: 10px; }
-        .nav-btn {
-            background-color: #2C2C2E; color: white; border: none;
-            padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 500;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; width: 100%;
-        }
-
-        /* --- LIST VIEW --- */
-        .list-container { 
-            flex: 1; overflow-y: scroll; padding: 0 16px;
-            -webkit-overflow-scrolling: touch; 
-        }
-        .entry-list { list-style: none; padding: 0; margin: 15px 0; }
-        
-        .entry-item {
-            background-color: var(--card-bg); margin-bottom: 6px; border-radius: 10px;
-            display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
-        }
-        .entry-left { display: flex; flex-direction: column; flex: 1; }
-        .entry-date { font-size: 10px; color: var(--text-secondary); margin-bottom: 1px; text-transform: uppercase; }
-        .entry-name { font-size: 16px; color: white; font-weight: 500; margin-bottom: 1px; }
-        .entry-sub { font-size: 11px; color: var(--text-secondary); }
-        .entry-right { display: flex; align-items: center; gap: 8px; }
-        .entry-amount { font-size: 15px; font-weight: 600; margin-right: 4px; }
         .action-btn {
             background: #2C2C2E; border: none; padding: 6px; border-radius: 6px; 
             color: var(--text-secondary); display: flex; cursor: pointer;
         }
         .action-btn svg { width: 14px; height: 14px; }
+        .reminder-dot { color: var(--accent-yellow); font-size: 14px; }
+
+        /* --- BOTTOM TAB BAR --- */
+        .tab-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            height: 85px; background-color: var(--tab-bar-bg);
+            border-top: 0.5px solid rgba(255,255,255,0.15);
+            display: flex; justify-content: space-around;
+            padding-top: 10px; padding-bottom: env(safe-area-inset-bottom);
+            z-index: 50; backdrop-filter: blur(20px);
+        }
+
+        .tab-btn {
+            background: none; border: none; color: #8E8E93;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            font-size: 10px; width: 50%; cursor: pointer;
+        }
+        .tab-btn.active { color: var(--accent-blue); }
+        .tab-btn svg { width: 24px; height: 24px; }
 
         /* --- MODAL --- */
         .modal-overlay {
@@ -220,7 +205,6 @@
         }
         input[type="date"] { display: block; -webkit-appearance: none; min-height: 44px; }
 
-        /* Cat Switch */
         .cat-switch { display: flex; background: var(--input-bg); border-radius: 10px; padding: 3px; }
         .cat-opt {
             flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 500;
@@ -229,10 +213,7 @@
         .cat-opt.active-inc { background: var(--accent-green); color: black; }
         .cat-opt.active-exp { background: var(--accent-red); color: white; }
         
-        /* Freq Grid */
-        .freq-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-        }
+        .freq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .freq-opt {
             background: #2C2C2E; color: var(--text-secondary);
             text-align: center; padding: 10px; font-size: 13px; font-weight: 500;
@@ -257,7 +238,7 @@
 
     <div id="view-dashboard" class="view active">
         <header>
-            <h1>Budget</h1>
+            <h1>Übersicht</h1>
             <div class="header-actions">
                 <button class="backup-btn" onclick="exportData()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -265,11 +246,10 @@
                 <button class="backup-btn" onclick="document.getElementById('fileInput').click()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 </button>
-                <button class="header-btn" onclick="openModal()">+</button>
             </div>
         </header>
 
-        <div class="dashboard-content">
+        <div class="content-scroll">
             <div class="balance-section">
                 <div class="balance-label">Verfügbar / Monat (Netto)</div>
                 <div class="balance-amount" id="mainBalance">0,00 €</div>
@@ -290,37 +270,32 @@
                 <div id="intervalStats" class="interval-row">
                     </div>
             </div>
-
-            <div id="dashboardGroups" class="group-container">
-                </div>
-
-            <div class="nav-btn-container">
-                <button class="nav-btn" onclick="goToDetails()">
-                    <span>Alle Buchungen & Details</span>
-                    <span style="color: #8E8E93">›</span>
-                </button>
-            </div>
-            
-            <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="importData(this)">
         </div>
     </div>
 
-    <div id="view-details" class="view">
+    <div id="view-list" class="view">
         <header>
-            <button class="backup-btn" onclick="goToDashboard()" style="font-size: 16px;">
-                ‹ Zurück
-            </button>
             <h1>Buchungen</h1>
             <div class="header-actions">
                 <button class="header-btn" onclick="openModal()">+</button>
             </div>
         </header>
 
-        <div class="list-container">
-            <ul class="entry-list" id="entryList">
-                </ul>
+        <div class="content-scroll">
+            <div id="listGroups" class="group-container"></div>
             <div style="height: 50px;"></div>
         </div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Übersicht
+        </button>
+        <button class="tab-btn" onclick="switchTab('list')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            Buchungen
+        </button>
     </div>
 
     <div class="modal-overlay" id="modal">
@@ -334,7 +309,9 @@
 
             <input type="text" class="modal-input" id="inpName" placeholder="Bezeichnung">
             <input type="number" class="modal-input" id="inpAmount" placeholder="Betrag" inputmode="decimal">
-            <input type="date" class="modal-input" id="inpDate"> <div class="freq-grid">
+            <input type="date" class="modal-input" id="inpDate"> 
+
+            <div class="freq-grid">
                 <div class="freq-opt" id="freq-monthly" onclick="setFrequency('monthly')">Monatlich</div>
                 <div class="freq-opt" id="freq-quarterly" onclick="setFrequency('quarterly')">Vierteljährl.</div>
                 <div class="freq-opt" id="freq-semiannually" onclick="setFrequency('semiannually')">Halbjährl.</div>
@@ -348,6 +325,8 @@
             </div>
         </div>
     </div>
+    
+    <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="importData(this)">
 
     <script>
         // Icons
@@ -360,50 +339,40 @@
         let modalFreq = 'monthly';
         let editingId = null; 
 
-        // Start
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
-            updateDashboard();
+            updateApp();
         });
 
-        // Navigation
-        function goToDetails() {
-            document.getElementById('view-dashboard').classList.remove('active');
-            document.getElementById('view-details').classList.add('active');
+        function switchTab(tab) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            if(tab === 'dashboard') {
+                document.getElementById('view-dashboard').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else {
+                document.getElementById('view-list').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            }
+        }
+
+        function updateApp() {
+            updateDashboard();
             renderList();
         }
 
-        function goToDashboard() {
-            document.getElementById('view-details').classList.remove('active');
-            document.getElementById('view-dashboard').classList.add('active');
-            updateDashboard();
-        }
-
-        // --- DASHBOARD LOGIC ---
+        // --- DASHBOARD ---
         function updateDashboard() {
             let totalMonthly = 0;
             let sumMonthlyInc = 0;
             let sumMonthlyExp = 0;
-            
-            // Summen für Intervalle
             let sumQuarter = 0;
             let sumSemi = 0;
             let sumYearly = 0;
 
-            // Container leeren
-            const container = document.getElementById('dashboardGroups');
-            container.innerHTML = '';
-
-            // Daten gruppieren
-            const groups = {
-                'monthly': { label: 'Monatlich', items: [] },
-                'quarterly': { label: 'Vierteljährlich', items: [] },
-                'semiannually': { label: 'Halbjährlich', items: [] },
-                'yearly': { label: 'Jährlich', items: [] }
-            };
-
             entries.forEach(e => {
-                // Nur Monatliches berechnet das "Verfügbar"
+                // Nur Monatlich zählt für Verfügbar
                 if(e.freq === 'monthly') {
                     if(e.category === 'income') {
                         totalMonthly += e.amount;
@@ -413,23 +382,15 @@
                         sumMonthlyExp += e.amount;
                     }
                 }
-
-                // Andere Intervalle nur summieren
+                // Andere Intervalle (nur Expense zählen hier für die Übersicht)
                 if(e.category === 'expense') {
                     if(e.freq === 'quarterly') sumQuarter += e.amount;
                     if(e.freq === 'semiannually') sumSemi += e.amount;
                     if(e.freq === 'yearly') sumYearly += e.amount;
                 }
-
-                // Einsortieren für Listenansicht (ohne Einmalige)
-                if (groups[e.freq]) {
-                    groups[e.freq].items.push(e);
-                }
             });
 
-            // --- UI UPDATES ---
-
-            // Balance (Rein Monatlich)
+            // Balance
             const balEl = document.getElementById('mainBalance');
             let displayString = totalMonthly.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
             if (totalMonthly < 0) {
@@ -438,11 +399,10 @@
                 balEl.innerText = displayString;
             }
 
-            // Summary Row 1 (Monthly)
+            // Summary Rows
             document.getElementById('sumIncome').innerText = sumMonthlyInc.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
             document.getElementById('sumExpense').innerText = sumMonthlyExp.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
 
-            // Summary Row 2 (Intervals) - Nur anzeigen wenn > 0
             const intervalRow = document.getElementById('intervalStats');
             intervalRow.innerHTML = '';
             
@@ -452,17 +412,33 @@
                         <div class="interval-item">
                             <span class="int-label">${label}</span>
                             <span class="int-val">${val.toLocaleString('de-DE')} €</span>
-                        </div>
-                    `;
+                        </div>`;
                 }
             };
-            
-            // Wenn gar keine anderen Kosten da sind, bleibt das leer (dezent)
             addStat('Vierteljährl.', sumQuarter);
             addStat('Halbjährl.', sumSemi);
             addStat('Jährlich', sumYearly);
+        }
 
-            // Gruppen rendern (Listen)
+        // --- LIST VIEW (GROUPED) ---
+        function renderList() {
+            const container = document.getElementById('listGroups');
+            container.innerHTML = '';
+
+            const groups = {
+                'monthly': { label: 'Monatlich', items: [] },
+                'quarterly': { label: 'Vierteljährlich', items: [] },
+                'semiannually': { label: 'Halbjährlich', items: [] },
+                'yearly': { label: 'Jährlich', items: [] },
+                'onetime': { label: 'Einmalig / Sonstiges', items: [] }
+            };
+
+            // Einsortieren
+            entries.forEach(e => {
+                if(groups[e.freq]) groups[e.freq].items.push(e);
+            });
+
+            // Rendern
             Object.keys(groups).forEach(key => {
                 const group = groups[key];
                 if(group.items.length > 0) {
@@ -472,10 +448,16 @@
                     h.innerText = group.label;
                     container.appendChild(h);
 
-                    // Liste
+                    // List UL
                     const ul = document.createElement('ul');
                     ul.className = 'group-list';
-                    
+
+                    // Sort: Within group by date (optional) or name
+                    group.items.sort((a,b) => {
+                         if(!a.date) return 1; if(!b.date) return -1;
+                         return new Date(a.date) - new Date(b.date);
+                    });
+
                     group.items.forEach(item => {
                         const li = document.createElement('li');
                         li.className = 'group-item';
@@ -483,17 +465,28 @@
                         const prefix = item.category === 'income' ? '+' : '-';
                         const valClass = item.category === 'income' ? 'inc' : 'exp';
                         
-                        // Check Reminder
+                        let dateStr = '';
+                        if(item.date) {
+                            let d = new Date(item.date);
+                            if(!isNaN(d)) dateStr = d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
+                        }
+
+                        // Reminder
                         let reminderHtml = '';
-                        if(key !== 'monthly' && item.date) {
-                            if(checkReminder(item.date)) {
-                                reminderHtml = `<span class="reminder-dot" title="Bald fällig">${ICON_WARN}</span>`;
-                            }
+                        if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
+                            reminderHtml = `<span class="reminder-dot">${ICON_WARN}</span>`;
                         }
 
                         li.innerHTML = `
-                            <span class="g-name">${item.name} ${reminderHtml}</span>
-                            <span class="g-amount ${valClass}">${prefix} ${item.amount.toLocaleString('de-DE')} €</span>
+                            <div class="entry-left">
+                                <div class="entry-name">${item.name} ${reminderHtml}</div>
+                                <div class="entry-meta">${dateStr}</div>
+                            </div>
+                            <div class="entry-right">
+                                <span class="entry-amount ${valClass}">${prefix} ${item.amount.toLocaleString('de-DE')} €</span>
+                                <button class="action-btn" onclick="openModal(${item.id})">${ICON_EDIT}</button>
+                                <button class="action-btn" onclick="deleteItem(${item.id})">${ICON_TRASH}</button>
+                            </div>
                         `;
                         ul.appendChild(li);
                     });
@@ -503,96 +496,30 @@
         }
 
         function checkReminder(dateStr) {
-            if(!dateStr) return false;
             const itemDate = new Date(dateStr);
-            if(isNaN(itemDate)) return false;
-
             const now = new Date();
             let targetDate = new Date(now.getFullYear(), itemDate.getMonth(), itemDate.getDate());
-            
-            const diffTime = targetDate - now;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
+            const diffDays = Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24)); 
             if (diffDays >= 0 && diffDays <= 30) return true;
-            
             let nextYearDate = new Date(now.getFullYear() + 1, itemDate.getMonth(), itemDate.getDate());
-            const diffTimeNext = nextYearDate - now;
-            const diffDaysNext = Math.ceil(diffTimeNext / (1000 * 60 * 60 * 24));
-            
+            const diffDaysNext = Math.ceil((nextYearDate - now) / (1000 * 60 * 60 * 24));
             if (diffDaysNext >= 0 && diffDaysNext <= 30) return true;
-
             return false;
-        }
-
-        // --- LIST VIEW ---
-        function renderList() {
-            const list = document.getElementById('entryList');
-            list.innerHTML = '';
-            
-            let sortedEntries = [...entries].sort((a, b) => {
-                if(!a.date && !b.date) return 0;
-                if(!a.date) return 1;
-                if(!b.date) return -1;
-                return new Date(a.date) - new Date(b.date);
-            });
-
-            sortedEntries.forEach((e) => {
-                const li = document.createElement('li');
-                li.className = 'entry-item';
-                
-                let dateStr = '---';
-                if(e.date) {
-                    let dateObj = new Date(e.date);
-                    if(!isNaN(dateObj)) dateStr = dateObj.toLocaleDateString('de-DE', {day: '2-digit', month:'2-digit', year:'2-digit'});
-                }
-
-                let sub = '';
-                switch(e.freq) {
-                    case 'monthly': sub = 'Monatlich'; break;
-                    case 'quarterly': sub = 'Vierteljährl.'; break;
-                    case 'semiannually': sub = 'Halbjährl.'; break;
-                    case 'yearly': sub = 'Jährlich'; break;
-                    case 'onetime': sub = 'Einmalig'; break;
-                }
-
-                let colorClass = e.category === 'income' ? 'var(--accent-green)' : 'var(--accent-red)';
-                let prefix = e.category === 'income' ? '+' : '-';
-
-                li.innerHTML = `
-                    <div class="entry-left">
-                        <span class="entry-date">${dateStr}</span>
-                        <span class="entry-name">${e.name}</span>
-                        <span class="entry-sub">${sub}</span>
-                    </div>
-                    <div class="entry-right">
-                        <span class="entry-amount" style="color: ${colorClass}">
-                            ${prefix} ${e.amount.toLocaleString('de-DE', {minimumFractionDigits: 2})} €
-                        </span>
-                        <button class="action-btn" onclick="openModal(${e.id})">${ICON_EDIT}</button>
-                        <button class="action-btn" onclick="deleteItem(${e.id})">${ICON_TRASH}</button>
-                    </div>
-                `;
-                list.appendChild(li);
-            });
         }
 
         // --- CRUD ---
         function saveEntry() {
             const name = document.getElementById('inpName').value;
             const amountStr = document.getElementById('inpAmount').value;
-            const dateStr = document.getElementById('inpDate').value; 
+            const dateStr = document.getElementById('inpDate').value;
 
-            if(!name || !amountStr) return alert("Name und Betrag sind Pflicht.");
-
+            if(!name || !amountStr) return alert("Pflichtfelder fehlen.");
             const amount = parseFloat(amountStr.replace(',', '.'));
 
             const newEntry = {
                 id: editingId ? editingId : Date.now(),
-                name: name,
-                amount: amount,
-                date: dateStr, 
-                category: modalCategory,
-                freq: modalFreq
+                name: name, amount: amount, date: dateStr,
+                category: modalCategory, freq: modalFreq
             };
 
             if (editingId) {
@@ -604,112 +531,85 @@
 
             saveData();
             closeModal();
-            
-            if(document.getElementById('view-details').classList.contains('active')) renderList();
-            else updateDashboard();
+            updateApp();
         }
 
         function deleteItem(id) {
-            if(confirm("Löschen?")) {
+            if(confirm("Eintrag löschen?")) {
                 entries = entries.filter(e => e.id !== id);
                 saveData();
-                renderList();
-                updateDashboard();
+                updateApp();
             }
         }
 
-        // --- MODAL UI ---
+        // --- MODAL & DATA ---
         function openModal(id = null) {
             document.getElementById('modal').classList.add('open');
             const title = document.getElementById('modalTitle');
-            
             if (id) {
-                editingId = id;
-                title.innerText = "Bearbeiten";
+                editingId = id; title.innerText = "Bearbeiten";
                 const item = entries.find(e => e.id === id);
                 if(item) {
                     document.getElementById('inpName').value = item.name;
                     document.getElementById('inpAmount').value = item.amount;
                     document.getElementById('inpDate').value = item.date;
-                    setModalCategory(item.category);
-                    setFrequency(item.freq);
+                    setModalCategory(item.category); setFrequency(item.freq);
                 }
             } else {
-                editingId = null;
-                title.innerText = "Neuer Eintrag";
+                editingId = null; title.innerText = "Neuer Eintrag";
                 document.getElementById('inpName').value = '';
                 document.getElementById('inpAmount').value = '';
-                document.getElementById('inpDate').value = ''; 
-                setModalCategory('expense');
-                setFrequency('monthly');
-                document.getElementById('inpName').focus();
+                document.getElementById('inpDate').value = '';
+                setModalCategory('expense'); setFrequency('monthly');
             }
         }
-
         function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
         function setModalCategory(cat) {
             modalCategory = cat;
-            const incBtn = document.getElementById('opt-income');
-            const expBtn = document.getElementById('opt-expense');
-            incBtn.className = 'cat-opt'; expBtn.className = 'cat-opt';
-            if(cat === 'income') incBtn.classList.add('active-inc');
-            else expBtn.classList.add('active-exp');
+            const inc = document.getElementById('opt-income');
+            const exp = document.getElementById('opt-expense');
+            inc.className = cat === 'income' ? 'cat-opt active-inc' : 'cat-opt';
+            exp.className = cat === 'expense' ? 'cat-opt active-exp' : 'cat-opt';
         }
-
         function setFrequency(freq) {
             modalFreq = freq;
-            const ids = ['monthly', 'quarterly', 'semiannually', 'yearly', 'onetime'];
-            ids.forEach(id => {
-                const el = document.getElementById('freq-' + id);
+            ['monthly','quarterly','semiannually','yearly','onetime'].forEach(id => {
+                const el = document.getElementById('freq-'+id);
                 el.classList.remove('active');
-                if(id === freq) el.classList.add('active');
+                if(id===freq) el.classList.add('active');
             });
         }
 
-        // --- BACKUP ---
-        function saveData() { localStorage.setItem('finApp_v14', JSON.stringify(entries)); }
-        
+        function saveData() { localStorage.setItem('finApp_v15', JSON.stringify(entries)); }
         function loadData() {
-            const raw = localStorage.getItem('finApp_v14');
+            const raw = localStorage.getItem('finApp_v15');
             if(!raw) {
-                const v13 = localStorage.getItem('finApp_v13');
-                if(v13) { entries = JSON.parse(v13); saveData(); }
-            } else {
-                entries = JSON.parse(raw);
-            }
+                const v14 = localStorage.getItem('finApp_v14');
+                if(v14) { entries = JSON.parse(v14); saveData(); }
+            } else { entries = JSON.parse(raw); }
         }
-
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries));
-            const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
+            const a = document.createElement('a'); a.href = dataStr;
             const d = new Date().toISOString().slice(0,10);
-            a.setAttribute("download", `finanzen_backup_${d}.json`);
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            a.download = `finanzen_backup_${d}.json`;
+            document.body.appendChild(a); a.click(); a.remove();
         }
-
         function importData(input) {
-            const file = input.files[0];
-            if(!file) return;
+            const file = input.files[0]; if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const loaded = JSON.parse(e.target.result);
                     if(Array.isArray(loaded)) {
-                        if(confirm("Daten überschreiben?")) {
-                            entries = loaded;
-                            saveData();
-                            updateDashboard();
-                            alert("OK");
+                        if(confirm("Überschreiben?")) {
+                            entries = loaded; saveData(); updateApp();
                         }
                     }
-                } catch(err) { alert("Fehler"); }
+                } catch(e){ alert("Fehler"); }
             };
-            reader.readAsText(file);
-            input.value = '';
+            reader.readAsText(file); input.value = '';
         }
     </script>
 </body>
