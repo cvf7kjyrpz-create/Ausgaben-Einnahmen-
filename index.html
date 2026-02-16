@@ -17,7 +17,7 @@
             --card-bg: #1C1C1E;
             --text-primary: #FFFFFF;
             --text-secondary: #8E8E93;
-            --text-gray: #D1D1D6; /* Neues Einheitsgrau */
+            --text-gray: #D1D1D6;
             --accent-green: #30D158;
             --accent-red: #FF453A;
             --accent-blue: #0A84FF;
@@ -89,7 +89,6 @@
             letter-spacing: 1px; margin-bottom: 12px;
         }
         
-        /* Alles Grau auf dem Dashboard */
         .balance-amount {
             font-size: 36px; 
             font-weight: 600; 
@@ -105,7 +104,6 @@
         .summary-item span { display: block; }
         .sum-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
         
-        /* Auch die kleinen Summen Grau */
         .sum-val { 
             font-size: 17px; 
             font-weight: 600; 
@@ -188,30 +186,28 @@
 
         .modal-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 10px; }
         
-        /* Input Styling - Einheitlich */
+        /* Input Styling */
         .modal-input {
             width: 100%; 
             background-color: var(--input-bg); 
             border: none;
             border-radius: 10px; 
-            padding: 0 14px; /* Padding nur links/rechts */
+            padding: 0 14px;
             font-size: 16px; 
             color: white;
             outline: none; 
             text-align: center;
-            height: 50px; /* Feste Höhe für alle */
+            height: 50px; 
             line-height: 50px;
             font-family: inherit;
-            box-sizing: border-box; /* Wichtig für korrekte Breite */
-            -webkit-appearance: none; /* Entfernt iOS Styles */
+            box-sizing: border-box; 
+            -webkit-appearance: none;
             appearance: none;
             margin: 0;
         }
         
-        /* Datum spezifisch */
         input[type="date"] {
             display: block;
-            /* iOS Fixes */
             -webkit-appearance: none;
             min-height: 50px;
         }
@@ -368,7 +364,6 @@
             const balance = totalInc - totalExp;
             const balEl = document.getElementById('mainBalance');
             
-            // Formatierung: Immer Grau, nur Minus davor
             let displayString = balance.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
             
             if (balance < 0) {
@@ -385,7 +380,8 @@
             const list = document.getElementById('entryList');
             list.innerHTML = '';
             
-            let sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sortierung: Ältestes Datum zuerst (Aufsteigend 1. -> 31.)
+            let sortedEntries = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
 
             sortedEntries.forEach((e) => {
                 const li = document.createElement('li');
@@ -525,15 +521,14 @@
         }
 
         // --- BACKUP ---
-        function saveData() { localStorage.setItem('finApp_v7', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v9', JSON.stringify(entries)); }
         
         function loadData() {
-            const raw = localStorage.getItem('finApp_v7');
+            const raw = localStorage.getItem('finApp_v9');
             if(!raw) {
-                // Keine Migration nötig für Style-Änderungen
-                const v6 = localStorage.getItem('finApp_v6');
-                if(v6) {
-                    entries = JSON.parse(v6);
+                const v7 = localStorage.getItem('finApp_v7');
+                if(v7) {
+                    entries = JSON.parse(v7);
                     saveData();
                 }
             } else {
