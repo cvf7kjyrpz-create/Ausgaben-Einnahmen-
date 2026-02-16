@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>Kosten</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/192/wallet.png">
+
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-color: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --accent-blue: #0A84FF;
+            --accent-red: #FF453A;
+            --accent-green: #30D158;
+            --separator: #38383A;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .add-btn {
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            font-size: 24px; /* Icon size */
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Summary Card */
+        .summary-card {
+            background-color: var(--card-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .summary-amount {
+            font-size: 42px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .summary-amount.positive { color: var(--accent-green); }
+        .summary-amount.negative { color: var(--accent-red); }
+
+        .summary-detail {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Income Input Section */
+        .income-section {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .income-label {
+            font-size: 17px;
+        }
+
+        .income-input {
+            background: transparent;
+            border: none;
+            color: var(--accent-green);
+            font-size: 17px;
+            text-align: right;
+            width: 120px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        /* Section Titles */
+        h2 {
+            font-size: 20px;
+            margin: 0 0 10px 5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* List Styling */
+        .expense-list {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            list-style: none;
+            margin: 0 0 24px 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            position: relative;
+        }
+
+        .expense-item:not(:last-child):after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: calc(100% - 16px);
+            height: 1px;
+            background-color: var(--separator);
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name {
+            font-size: 17px;
+            font-weight: 400;
+            margin-bottom: 2px;
+        }
+
+        .item-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-amount {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--accent-red);
+            padding: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+            font-size: 18px;
+        }
+
+        /* Modal / Form */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: flex-end; /* Sheet style */
+            z-index: 200;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1C1C1E;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            color: var(--accent-blue);
+            background: none;
+            border: none;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: #2C2C2E;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 17px;
+            color: white;
+            outline: none;
+        }
+
+        .switch-container {
+            display: flex;
+            background-color: #2C2C2E;
+            border-radius: 8px;
+            padding: 2px;
+            margin-bottom: 20px;
+        }
+
+        .switch-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .switch-option.active {
+            background-color: #636366;
+            color: white;
+            font-weight: 600;
+        }
+
+        .save-btn {
+            width: 100%;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 40px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Übersicht</h1>
+        <button class="add-btn" onclick="openModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+    </header>
+
+    <main>
+        <div class="summary-card">
+            <div class="summary-label">Verfügbar pro Monat</div>
+            <div class="summary-amount" id="balanceDisplay">0,00 €</div>
+            <div class="summary-detail" id="calcDetail">Einnahmen - Fixkosten</div>
+        </div>
+
+        <div class="income-section">
+            <span class="income-label">Netto Einnahmen</span>
+            <input type="number" class="income-input" id="incomeInput" placeholder="0.00" onchange="updateIncome()" onkeyup="updateIncome()">
+        </div>
+
+        <h2>Fixkosten</h2>
+        <ul class="expense-list" id="expenseList">
+            </ul>
+        <div id="emptyState" class="empty-state">Noch keine Kosten eingetragen.</div>
+    </main>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">Abbrechen</button>
+                <span class="modal-title">Neuer Eintrag</span>
+                <button class="close-btn" style="opacity: 0; pointer-events: none;">Leer</button>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" class="form-input" id="newName" placeholder="Name (z.B. Miete, Netflix)">
+            </div>
+
+            <div class="form-group">
+                <input type="number" class="form-input" id="newAmount" placeholder="Betrag (z.B. 450)" inputmode="decimal">
+            </div>
+
+            <div class="switch-container">
+                <div class="switch-option active" id="typeMonthly" onclick="setExpenseType('monthly')">Monatlich</div>
+                <div class="switch-option" id="typeYearly" onclick="setExpenseType('yearly')">Jährlich</div>
+            </div>
+
+            <button class="save-btn" onclick="addItem()">Hinzufügen</button>
+        </div>
+    </div>
+
+    <script>
+        // Data State
+        let expenses = [];
+        let income = 0;
+        let currentType = 'monthly'; // 'monthly' or 'yearly' for new item
+
+        // On Load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            render();
+        });
+
+        // Load from LocalStorage
+        function loadData() {
+            const storedExpenses = localStorage.getItem('myExpenses');
+            const storedIncome = localStorage.getItem('myIncome');
+
+            if (storedExpenses) {
+                expenses = JSON.parse(storedExpenses);
+            }
+            if (storedIncome) {
+                income = parseFloat(storedIncome);
+                document.getElementById('incomeInput').value = income;
+            }
+        }
+
+        // Save to LocalStorage
+        function saveData() {
+            localStorage.setItem('myExpenses', JSON.stringify(expenses));
+            localStorage.setItem('myIncome', income.toString());
+        }
+
+        // Render the UI
+        function render() {
+            const listElement = document.getElementById('expenseList');
+            const emptyState = document.getElementById('emptyState');
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const calcDetail = document.getElementById('calcDetail');
+            
+            listElement.innerHTML = '';
+            
+            let totalMonthlyCost = 0;
+
+            if (expenses.length === 0) {
+                emptyState.style.display = 'block';
+                listElement.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                listElement.style.display = 'block';
+
+                expenses.forEach((item, index) => {
+                    // Calculation for total
+                    let effectiveMonthlyCost = 0;
+                    if (item.type === 'monthly') {
+                        effectiveMonthlyCost = item.amount;
+                    } else {
+                        effectiveMonthlyCost = item.amount / 12;
+                    }
+                    totalMonthlyCost += effectiveMonthlyCost;
+
+                    // Create List Item
+                    const li = document.createElement('li');
+                    li.className = 'expense-item';
+                    
+                    const displayAmount = item.amount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const typeLabel = item.type === 'monthly' ? 'Monatlich' : 'Jährlich';
+                    
+                    li.innerHTML = `
+                        <div class="item-info">
+                            <span class="item-name">${item.name}</span>
+                            <span class="item-type">${typeLabel}</span>
+                        </div>
+                        <div class="item-actions">
+                            <span class="item-amount">- ${displayAmount} €</span>
+                            <button class="delete-btn" onclick="deleteItem(${index})">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    `;
+                    listElement.appendChild(li);
+                });
+            }
+
+            // Calculate Balance
+            const balance = income - totalMonthlyCost;
+            
+            // Render Balance
+            balanceDisplay.innerText = balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+            
+            if (balance >= 0) {
+                balanceDisplay.classList.remove('negative');
+                balanceDisplay.classList.add('positive');
+            } else {
+                balanceDisplay.classList.remove('positive');
+                balanceDisplay.classList.add('negative');
+            }
+
+            // Update details
+            calcDetail.innerText = `Gesamtkosten: ${totalMonthlyCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € / Monat`;
+        }
+
+        // Logic Functions
+        function updateIncome() {
+            const inputVal = document.getElementById('incomeInput').value;
+            income = inputVal ? parseFloat(inputVal) : 0;
+            saveData();
+            render();
+        }
+
+        function addItem() {
+            const nameInput = document.getElementById('newName');
+            const amountInput = document.getElementById('newAmount');
+            
+            const name = nameInput.value.trim();
+            const amount = parseFloat(amountInput.value);
+
+            if (name && amount) {
+                expenses.push({
+                    name: name,
+                    amount: amount,
+                    type: currentType
+                });
+                
+                // Clear inputs
+                nameInput.value = '';
+                amountInput.value = '';
+                
+                saveData();
+                render();
+                closeModal();
+            } else {
+                alert('Bitte Name und Betrag eingeben.');
+            }
+        }
+
+        function deleteItem(index) {
+            if(confirm('Eintrag löschen?')) {
+                expenses.splice(index, 1);
+                saveData();
+                render();
+            }
+        }
+
+        // Modal Logic
+        function openModal() {
+            document.getElementById('addModal').classList.add('active');
+            document.getElementById('newName').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        function setExpenseType(type) {
+            currentType = type;
+            const btnMonthly = document.getElementById('typeMonthly');
+            const btnYearly = document.getElementById('typeYearly');
+
+            if (type === 'monthly') {
+                btnMonthly.classList.add('active');
+                btnYearly.classList.remove('active');
+            } else {
+                btnMonthly.classList.remove('active');
+                btnYearly.classList.add('active');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('addModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addModal') closeModal();
+        });
+    </script>
+</body>
+</html>
