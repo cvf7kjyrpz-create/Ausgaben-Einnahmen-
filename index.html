@@ -417,7 +417,6 @@
             if (isNaN(end)) return false;
             
             const today = new Date();
-            // Nur das Datum vergleichen, Uhrzeit ignorieren
             end.setHours(23, 59, 59, 999);
             return today > end;
         }
@@ -444,10 +443,8 @@
             const currentYear = now.getFullYear();
 
             entries.forEach(e => {
-                // Wenn Eintrag abgelaufen ist, ignorieren wir ihn für die Startseite!
                 if (isExpired(e.endDate)) return;
 
-                // Monatlich (Verfügbar-Berechnung)
                 if(e.freq === 'monthly') {
                     if(e.category === 'income') {
                         totalMonthly += e.amount;
@@ -458,7 +455,6 @@
                     }
                 }
                 
-                // Intervalle (Nur Ausgaben summiert, inkl. Reminder-Check)
                 if(e.category === 'expense') {
                     const hasRem = checkReminder(e.date);
                     if(e.freq === 'quarterly') { sumQuarter += e.amount; if(hasRem) remQ = true; }
@@ -466,7 +462,6 @@
                     if(e.freq === 'yearly') { sumYearly += e.amount; if(hasRem) remY = true; }
                 }
 
-                // Einmalige im aktuellen Monat
                 if(e.freq === 'onetime' && e.date) {
                     let d = new Date(e.date);
                     if(!isNaN(d) && d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
@@ -476,7 +471,6 @@
                 }
             });
 
-            // Balance Update
             const balEl = document.getElementById('mainBalance');
             let displayString = totalMonthly.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
             if (totalMonthly < 0) {
@@ -485,11 +479,9 @@
                 balEl.innerText = displayString;
             }
 
-            // Summary Rows Update
             document.getElementById('sumIncome').innerText = sumMonthlyInc.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
             document.getElementById('sumExpense').innerText = sumMonthlyExp.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
 
-            // Intervalle mit Warnungen
             const intervalRow = document.getElementById('intervalStats');
             intervalRow.innerHTML = '';
             
@@ -507,7 +499,6 @@
             addStat('Halbjährl.', sumSemi, remS);
             addStat('Jährlich', sumYearly, remY);
 
-            // Einmalig Box Update
             const onetimeBox = document.getElementById('dashboardOnetime');
             if(sumOnetimeThisMonth !== 0) {
                 onetimeBox.style.display = 'flex';
@@ -523,7 +514,6 @@
             const container = document.getElementById('listGroups');
             container.innerHTML = '';
 
-            // Feste Reihenfolge: Einmalig IMMER ganz oben
             const groupOrder = ['onetime', 'monthly', 'quarterly', 'semiannually', 'yearly'];
             
             const groups = {
@@ -535,9 +525,7 @@
             };
 
             entries.forEach(e => {
-                // Suchfilter anwenden
                 if(searchQuery && !e.name.toLowerCase().includes(searchQuery)) return;
-                
                 if(groups[e.freq]) groups[e.freq].items.push(e);
             });
 
@@ -568,7 +556,6 @@
                         const prefix = item.category === 'income' ? '+' : '-';
                         let valClass = item.category === 'income' ? 'inc' : 'exp';
                         
-                        // Wenn es die Einmalig-Gruppe ist, alles in Blau anzeigen
                         if(group.isBlue) valClass = 'blue-val';
                         
                         let dateStr = '';
@@ -577,12 +564,23 @@
                             if(!isNaN(d)) dateStr = d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
                         }
 
-                        // Status / Reminder Text
+                        // Zusammenstellen der Infos unter dem Namen
                         let subText = dateStr;
                         if(expired) {
                             subText += ' <span style="color:var(--accent-red);">(Beendet)</span>';
-                        } else if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
-                            subText += ` <span class="reminder-dot">${ICON_WARN} Bald fällig</span>`;
+                        } else {
+                            // Befristung anzeigen
+                            if (item.endDate) {
+                                let ed = new Date(item.endDate);
+                                if(!isNaN(ed)) {
+                                    let eStr = ed.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
+                                    subText += (subText ? ' · ' : '') + `<span style="color:#8E8E93;">⏳ Bis ${eStr}</span>`;
+                                }
+                            }
+                            // Reminder checken
+                            if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
+                                subText += ` <span class="reminder-dot">${ICON_WARN} Bald fällig</span>`;
+                            }
                         }
 
                         li.innerHTML = `
@@ -693,7 +691,6 @@
                 if(id===freq) el.classList.add('active');
             });
             
-            // Befristung verstecken, wenn "Einmalig" ausgewählt ist
             const endContainer = document.getElementById('endDateContainer');
             if(freq === 'onetime') {
                 endContainer.style.display = 'none';
@@ -703,12 +700,12 @@
             }
         }
 
-        function saveData() { localStorage.setItem('finApp_v17', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v18', JSON.stringify(entries)); }
         function loadData() {
-            const raw = localStorage.getItem('finApp_v17');
+            const raw = localStorage.getItem('finApp_v18');
             if(!raw) {
-                const v16 = localStorage.getItem('finApp_v16');
-                if(v16) { entries = JSON.parse(v16); saveData(); }
+                const v17 = localStorage.getItem('finApp_v17');
+                if(v17) { entries = JSON.parse(v17); saveData(); }
             } else { entries = JSON.parse(raw); }
         }
         function exportData() {
