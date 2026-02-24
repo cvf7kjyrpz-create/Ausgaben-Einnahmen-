@@ -47,7 +47,7 @@
         .view {
             display: none; flex-direction: column; height: 100%; width: 100%;
             animation: fadeIn 0.2s ease;
-            padding-bottom: 85px; /* Platz für Tabbar */
+            padding-bottom: 85px; 
         }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -64,13 +64,10 @@
         h1 { font-size: 18px; font-weight: 600; margin: 0; }
         
         .header-actions { display: flex; align-items: center; gap: 15px; }
-        
         .header-btn {
             background: none; border: none; color: var(--accent-blue);
-            font-size: 28px; cursor: pointer; padding: 0; display: flex;
-            line-height: 1;
+            font-size: 28px; cursor: pointer; padding: 0; display: flex; line-height: 1;
         }
-        
         .backup-btn {
             background: none; border: none; color: #636366;
             font-size: 18px; cursor: pointer; padding: 5px; display: flex;
@@ -86,8 +83,7 @@
 
         /* --- DASHBOARD STYLES --- */
         .balance-section {
-            padding: 40px 20px 20px 20px;
-            text-align: center; flex-shrink: 0;
+            padding: 40px 20px 20px 20px; text-align: center; flex-shrink: 0;
         }
         .balance-label {
             color: var(--text-secondary); font-size: 12px; text-transform: uppercase;
@@ -99,7 +95,7 @@
 
         .stats-container {
             background-color: var(--card-bg);
-            border-radius: 12px; margin: 20px 16px; padding: 16px;
+            border-radius: 12px; margin: 10px 16px 20px 16px; padding: 16px;
         }
 
         .summary-row {
@@ -120,16 +116,44 @@
         .int-label {
             font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; display: block; text-transform: uppercase;
         }
-        .int-val { font-size: 15px; font-weight: 500; color: var(--text-gray); }
+        .int-val { font-size: 15px; font-weight: 500; color: var(--text-gray); display: flex; align-items: center; justify-content: center; gap: 4px;}
 
-        /* --- LIST VIEW STYLES (GROUPED) --- */
+        /* Onetime Box (Dashboard) */
+        .onetime-box {
+            background-color: rgba(10, 132, 255, 0.15);
+            border: 1px solid rgba(10, 132, 255, 0.3);
+            border-radius: 12px;
+            margin: 0 16px 20px 16px;
+            padding: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .onetime-label { color: var(--accent-blue); font-size: 14px; font-weight: 500; }
+        .onetime-val { color: var(--accent-blue); font-size: 16px; font-weight: 600; }
+
+        /* --- LIST VIEW STYLES --- */
+        .search-container {
+            padding: 10px 16px;
+            background: rgba(28, 28, 30, 0.95);
+            position: sticky; top: 0; z-index: 5;
+        }
+        .search-bar {
+            display: flex; align-items: center;
+            background: #2C2C2E; border-radius: 10px; padding: 8px 12px;
+        }
+        .search-icon { color: #8E8E93; width: 16px; height: 16px; margin-right: 8px; }
+        .search-input {
+            border: none; background: transparent; color: white;
+            font-size: 15px; width: 100%; outline: none;
+        }
+        .search-input::placeholder { color: #8E8E93; }
+
         .group-container { padding: 0 16px 20px 16px; }
-        
         .group-header {
             color: var(--text-secondary);
             font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;
-            margin: 25px 0 8px 10px; font-weight: 600;
+            margin: 20px 0 8px 10px; font-weight: 600;
         }
+        .group-header.blue-header { color: var(--accent-blue); }
 
         .group-list {
             background-color: var(--card-bg); border-radius: 12px;
@@ -144,6 +168,9 @@
             content: ''; position: absolute; bottom: 0; right: 0; left: 16px;
             height: 0.5px; background-color: var(--separator);
         }
+        
+        /* Expired Item Style */
+        .group-item.expired { opacity: 0.5; }
 
         .entry-left { display: flex; flex-direction: column; }
         .entry-name { font-size: 16px; font-weight: 500; color: white; display: flex; align-items: center; gap: 6px; }
@@ -153,6 +180,7 @@
         .entry-amount { font-size: 16px; font-weight: 400; margin-right: 5px; }
         .entry-amount.inc { color: var(--accent-green); }
         .entry-amount.exp { color: var(--text-primary); }
+        .entry-amount.blue-val { color: var(--accent-blue); font-weight: 500; }
 
         .action-btn {
             background: #2C2C2E; border: none; padding: 6px; border-radius: 6px; 
@@ -170,7 +198,6 @@
             padding-top: 10px; padding-bottom: env(safe-area-inset-bottom);
             z-index: 50; backdrop-filter: blur(20px);
         }
-
         .tab-btn {
             background: none; border: none; color: #8E8E93;
             display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -198,6 +225,7 @@
 
         .modal-title { font-size: 17px; font-weight: 700; text-align: center; margin-bottom: 5px; }
         
+        .input-label { font-size: 11px; color: var(--text-secondary); padding-left: 5px; margin-bottom: -6px; margin-top: 4px;}
         .modal-input {
             width: 100%; background-color: var(--input-bg); border: none;
             border-radius: 10px; padding: 0 12px; font-size: 16px; color: white;
@@ -247,7 +275,6 @@
                 <button class="backup-btn" onclick="document.getElementById('fileInput').click()" title="Backup laden">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 </button>
-                
                 <button class="header-btn" onclick="openModal()">+</button>
             </div>
         </header>
@@ -273,6 +300,11 @@
                 <div id="intervalStats" class="interval-row">
                     </div>
             </div>
+
+            <div class="onetime-box" id="dashboardOnetime" style="display: none;">
+                <span class="onetime-label">Einmalige Zahlungen (Dieser Monat)</span>
+                <span class="onetime-val" id="sumOnetime">0 €</span>
+            </div>
         </div>
     </div>
 
@@ -284,7 +316,14 @@
             </div>
         </header>
 
-        <div class="content-scroll">
+        <div class="search-container">
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buchungen durchsuchen..." oninput="handleSearch()">
+            </div>
+        </div>
+
+        <div class="content-scroll" style="padding-top: 0;">
             <div id="listGroups" class="group-container"></div>
             <div style="height: 50px;"></div>
         </div>
@@ -312,14 +351,21 @@
 
             <input type="text" class="modal-input" id="inpName" placeholder="Bezeichnung">
             <input type="number" class="modal-input" id="inpAmount" placeholder="Betrag" inputmode="decimal">
+            
+            <div class="input-label">Datum der Abbuchung (Optional):</div>
             <input type="date" class="modal-input" id="inpDate"> 
 
-            <div class="freq-grid">
+            <div class="freq-grid" style="margin-top: 5px;">
                 <div class="freq-opt" id="freq-monthly" onclick="setFrequency('monthly')">Monatlich</div>
                 <div class="freq-opt" id="freq-quarterly" onclick="setFrequency('quarterly')">Vierteljährl.</div>
                 <div class="freq-opt" id="freq-semiannually" onclick="setFrequency('semiannually')">Halbjährl.</div>
                 <div class="freq-opt" id="freq-yearly" onclick="setFrequency('yearly')">Jährlich</div>
                 <div class="freq-opt full-width" id="freq-onetime" onclick="setFrequency('onetime')">Einmalig</div>
+            </div>
+
+            <div id="endDateContainer">
+                <div class="input-label">Zahlung befristet bis (Optional):</div>
+                <input type="date" class="modal-input" id="inpEndDate">
             </div>
 
             <div class="btn-row">
@@ -332,15 +378,15 @@
     <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="importData(this)">
 
     <script>
-        // Icons
         const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
-        const ICON_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+        const ICON_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
         const ICON_WARN = `⚠️`;
 
         let entries = [];
         let modalCategory = 'expense';
         let modalFreq = 'monthly';
         let editingId = null; 
+        let searchQuery = '';
 
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
@@ -360,6 +406,22 @@
             }
         }
 
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            renderList();
+        }
+
+        function isExpired(dateStr) {
+            if (!dateStr) return false;
+            const end = new Date(dateStr);
+            if (isNaN(end)) return false;
+            
+            const today = new Date();
+            // Nur das Datum vergleichen, Uhrzeit ignorieren
+            end.setHours(23, 59, 59, 999);
+            return today > end;
+        }
+
         function updateApp() {
             updateDashboard();
             renderList();
@@ -370,12 +432,22 @@
             let totalMonthly = 0;
             let sumMonthlyInc = 0;
             let sumMonthlyExp = 0;
-            let sumQuarter = 0;
-            let sumSemi = 0;
-            let sumYearly = 0;
+            
+            let sumQuarter = 0; let remQ = false;
+            let sumSemi = 0; let remS = false;
+            let sumYearly = 0; let remY = false;
+            
+            let sumOnetimeThisMonth = 0;
+            
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
 
             entries.forEach(e => {
-                // Nur Monatlich zählt für Verfügbar
+                // Wenn Eintrag abgelaufen ist, ignorieren wir ihn für die Startseite!
+                if (isExpired(e.endDate)) return;
+
+                // Monatlich (Verfügbar-Berechnung)
                 if(e.freq === 'monthly') {
                     if(e.category === 'income') {
                         totalMonthly += e.amount;
@@ -385,15 +457,26 @@
                         sumMonthlyExp += e.amount;
                     }
                 }
-                // Andere Intervalle (nur Expense zählen hier für die Übersicht)
+                
+                // Intervalle (Nur Ausgaben summiert, inkl. Reminder-Check)
                 if(e.category === 'expense') {
-                    if(e.freq === 'quarterly') sumQuarter += e.amount;
-                    if(e.freq === 'semiannually') sumSemi += e.amount;
-                    if(e.freq === 'yearly') sumYearly += e.amount;
+                    const hasRem = checkReminder(e.date);
+                    if(e.freq === 'quarterly') { sumQuarter += e.amount; if(hasRem) remQ = true; }
+                    if(e.freq === 'semiannually') { sumSemi += e.amount; if(hasRem) remS = true; }
+                    if(e.freq === 'yearly') { sumYearly += e.amount; if(hasRem) remY = true; }
+                }
+
+                // Einmalige im aktuellen Monat
+                if(e.freq === 'onetime' && e.date) {
+                    let d = new Date(e.date);
+                    if(!isNaN(d) && d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+                        if(e.category === 'income') sumOnetimeThisMonth += e.amount;
+                        else sumOnetimeThisMonth -= e.amount;
+                    }
                 }
             });
 
-            // Balance
+            // Balance Update
             const balEl = document.getElementById('mainBalance');
             let displayString = totalMonthly.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
             if (totalMonthly < 0) {
@@ -402,60 +485,74 @@
                 balEl.innerText = displayString;
             }
 
-            // Summary Rows
+            // Summary Rows Update
             document.getElementById('sumIncome').innerText = sumMonthlyInc.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
             document.getElementById('sumExpense').innerText = sumMonthlyExp.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' €';
 
+            // Intervalle mit Warnungen
             const intervalRow = document.getElementById('intervalStats');
             intervalRow.innerHTML = '';
             
-            const addStat = (label, val) => {
+            const addStat = (label, val, warn) => {
                 if(val > 0) {
+                    let warnIcon = warn ? `<span style="color:var(--accent-yellow); font-size:12px; margin-left:4px;">${ICON_WARN}</span>` : '';
                     intervalRow.innerHTML += `
                         <div class="interval-item">
                             <span class="int-label">${label}</span>
-                            <span class="int-val">${val.toLocaleString('de-DE')} €</span>
+                            <span class="int-val">${val.toLocaleString('de-DE')} € ${warnIcon}</span>
                         </div>`;
                 }
             };
-            addStat('Vierteljährl.', sumQuarter);
-            addStat('Halbjährl.', sumSemi);
-            addStat('Jährlich', sumYearly);
+            addStat('Vierteljährl.', sumQuarter, remQ);
+            addStat('Halbjährl.', sumSemi, remS);
+            addStat('Jährlich', sumYearly, remY);
+
+            // Einmalig Box Update
+            const onetimeBox = document.getElementById('dashboardOnetime');
+            if(sumOnetimeThisMonth !== 0) {
+                onetimeBox.style.display = 'flex';
+                let prefix = sumOnetimeThisMonth > 0 ? '+' : '';
+                document.getElementById('sumOnetime').innerText = prefix + sumOnetimeThisMonth.toLocaleString('de-DE') + ' €';
+            } else {
+                onetimeBox.style.display = 'none';
+            }
         }
 
-        // --- LIST VIEW (GROUPED) ---
+        // --- LIST VIEW ---
         function renderList() {
             const container = document.getElementById('listGroups');
             container.innerHTML = '';
 
+            // Feste Reihenfolge: Einmalig IMMER ganz oben
+            const groupOrder = ['onetime', 'monthly', 'quarterly', 'semiannually', 'yearly'];
+            
             const groups = {
+                'onetime': { label: 'Einmalige Zahlungen', isBlue: true, items: [] },
                 'monthly': { label: 'Monatlich', items: [] },
                 'quarterly': { label: 'Vierteljährlich', items: [] },
                 'semiannually': { label: 'Halbjährlich', items: [] },
-                'yearly': { label: 'Jährlich', items: [] },
-                'onetime': { label: 'Einmalig / Sonstiges', items: [] }
+                'yearly': { label: 'Jährlich', items: [] }
             };
 
-            // Einsortieren
             entries.forEach(e => {
+                // Suchfilter anwenden
+                if(searchQuery && !e.name.toLowerCase().includes(searchQuery)) return;
+                
                 if(groups[e.freq]) groups[e.freq].items.push(e);
             });
 
-            // Rendern
-            Object.keys(groups).forEach(key => {
+            groupOrder.forEach(key => {
                 const group = groups[key];
                 if(group.items.length > 0) {
-                    // Header
                     const h = document.createElement('div');
                     h.className = 'group-header';
+                    if(group.isBlue) h.classList.add('blue-header');
                     h.innerText = group.label;
                     container.appendChild(h);
 
-                    // List UL
                     const ul = document.createElement('ul');
                     ul.className = 'group-list';
 
-                    // Sort: Within group by date (optional) or name
                     group.items.sort((a,b) => {
                          if(!a.date) return 1; if(!b.date) return -1;
                          return new Date(a.date) - new Date(b.date);
@@ -465,8 +562,14 @@
                         const li = document.createElement('li');
                         li.className = 'group-item';
                         
+                        const expired = isExpired(item.endDate);
+                        if(expired) li.classList.add('expired');
+                        
                         const prefix = item.category === 'income' ? '+' : '-';
-                        const valClass = item.category === 'income' ? 'inc' : 'exp';
+                        let valClass = item.category === 'income' ? 'inc' : 'exp';
+                        
+                        // Wenn es die Einmalig-Gruppe ist, alles in Blau anzeigen
+                        if(group.isBlue) valClass = 'blue-val';
                         
                         let dateStr = '';
                         if(item.date) {
@@ -474,16 +577,18 @@
                             if(!isNaN(d)) dateStr = d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
                         }
 
-                        // Reminder
-                        let reminderHtml = '';
-                        if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
-                            reminderHtml = `<span class="reminder-dot">${ICON_WARN}</span>`;
+                        // Status / Reminder Text
+                        let subText = dateStr;
+                        if(expired) {
+                            subText += ' <span style="color:var(--accent-red);">(Beendet)</span>';
+                        } else if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
+                            subText += ` <span class="reminder-dot">${ICON_WARN} Bald fällig</span>`;
                         }
 
                         li.innerHTML = `
                             <div class="entry-left">
-                                <div class="entry-name">${item.name} ${reminderHtml}</div>
-                                <div class="entry-meta">${dateStr}</div>
+                                <div class="entry-name" style="${group.isBlue ? 'color: var(--accent-blue);' : ''}">${item.name}</div>
+                                <div class="entry-meta">${subText}</div>
                             </div>
                             <div class="entry-right">
                                 <span class="entry-amount ${valClass}">${prefix} ${item.amount.toLocaleString('de-DE')} €</span>
@@ -500,6 +605,7 @@
 
         function checkReminder(dateStr) {
             const itemDate = new Date(dateStr);
+            if(isNaN(itemDate)) return false;
             const now = new Date();
             let targetDate = new Date(now.getFullYear(), itemDate.getMonth(), itemDate.getDate());
             const diffDays = Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24)); 
@@ -515,13 +621,14 @@
             const name = document.getElementById('inpName').value;
             const amountStr = document.getElementById('inpAmount').value;
             const dateStr = document.getElementById('inpDate').value;
+            const endDateStr = document.getElementById('inpEndDate').value;
 
-            if(!name || !amountStr) return alert("Pflichtfelder fehlen.");
+            if(!name || !amountStr) return alert("Bezeichnung und Betrag sind Pflicht.");
             const amount = parseFloat(amountStr.replace(',', '.'));
 
             const newEntry = {
                 id: editingId ? editingId : Date.now(),
-                name: name, amount: amount, date: dateStr,
+                name: name, amount: amount, date: dateStr, endDate: endDateStr,
                 category: modalCategory, freq: modalFreq
             };
 
@@ -555,7 +662,8 @@
                 if(item) {
                     document.getElementById('inpName').value = item.name;
                     document.getElementById('inpAmount').value = item.amount;
-                    document.getElementById('inpDate').value = item.date;
+                    document.getElementById('inpDate').value = item.date || '';
+                    document.getElementById('inpEndDate').value = item.endDate || '';
                     setModalCategory(item.category); setFrequency(item.freq);
                 }
             } else {
@@ -563,6 +671,7 @@
                 document.getElementById('inpName').value = '';
                 document.getElementById('inpAmount').value = '';
                 document.getElementById('inpDate').value = '';
+                document.getElementById('inpEndDate').value = '';
                 setModalCategory('expense'); setFrequency('monthly');
             }
         }
@@ -575,6 +684,7 @@
             inc.className = cat === 'income' ? 'cat-opt active-inc' : 'cat-opt';
             exp.className = cat === 'expense' ? 'cat-opt active-exp' : 'cat-opt';
         }
+        
         function setFrequency(freq) {
             modalFreq = freq;
             ['monthly','quarterly','semiannually','yearly','onetime'].forEach(id => {
@@ -582,14 +692,23 @@
                 el.classList.remove('active');
                 if(id===freq) el.classList.add('active');
             });
+            
+            // Befristung verstecken, wenn "Einmalig" ausgewählt ist
+            const endContainer = document.getElementById('endDateContainer');
+            if(freq === 'onetime') {
+                endContainer.style.display = 'none';
+                document.getElementById('inpEndDate').value = '';
+            } else {
+                endContainer.style.display = 'block';
+            }
         }
 
-        function saveData() { localStorage.setItem('finApp_v16', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v17', JSON.stringify(entries)); }
         function loadData() {
-            const raw = localStorage.getItem('finApp_v16');
+            const raw = localStorage.getItem('finApp_v17');
             if(!raw) {
-                const v15 = localStorage.getItem('finApp_v15');
-                if(v15) { entries = JSON.parse(v15); saveData(); }
+                const v16 = localStorage.getItem('finApp_v16');
+                if(v16) { entries = JSON.parse(v16); saveData(); }
             } else { entries = JSON.parse(raw); }
         }
         function exportData() {
@@ -606,7 +725,7 @@
                 try {
                     const loaded = JSON.parse(e.target.result);
                     if(Array.isArray(loaded)) {
-                        if(confirm("Überschreiben?")) {
+                        if(confirm("Daten überschreiben?")) {
                             entries = loaded; saveData(); updateApp();
                         }
                     }
