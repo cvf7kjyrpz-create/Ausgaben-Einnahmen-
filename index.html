@@ -21,6 +21,7 @@
             --accent-green: #30D158;
             --accent-red: #FF453A;
             --accent-blue: #0A84FF;
+            --accent-light-blue: #64D2FF; /* Dezentes Blau für Befristungen */
             --accent-yellow: #FFD60A;
             --separator: #38383A;
             --input-bg: #2C2C2E;
@@ -118,7 +119,6 @@
         }
         .int-val { font-size: 15px; font-weight: 500; color: var(--text-gray); display: flex; align-items: center; justify-content: center; gap: 4px;}
 
-        /* Onetime Box (Dashboard) */
         .onetime-box {
             background-color: rgba(10, 132, 255, 0.15);
             border: 1px solid rgba(10, 132, 255, 0.3);
@@ -129,6 +129,14 @@
         }
         .onetime-label { color: var(--accent-blue); font-size: 14px; font-weight: 500; }
         .onetime-val { color: var(--accent-blue); font-size: 16px; font-weight: 600; }
+
+        .nav-btn-container { padding: 0 16px 20px 16px; }
+        .nav-btn {
+            background-color: #2C2C2E; color: white; border: none;
+            padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 500;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; width: 100%;
+        }
 
         /* --- LIST VIEW STYLES --- */
         .search-container {
@@ -169,18 +177,24 @@
             height: 0.5px; background-color: var(--separator);
         }
         
-        /* Expired Item Style */
         .group-item.expired { opacity: 0.5; }
 
         .entry-left { display: flex; flex-direction: column; }
         .entry-name { font-size: 16px; font-weight: 500; color: white; display: flex; align-items: center; gap: 6px; }
-        .entry-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+        
+        /* Modifiziert für kleine, einzeilige Datumsangaben */
+        .entry-meta { font-size: 9.5px; color: var(--text-secondary); margin-top: 3px; letter-spacing: 0.2px; }
+        
+        /* Modifiziert für zeitlich begrenzte Einträge (Dezentes Blau) */
+        .is-limited .entry-name { color: var(--accent-light-blue); }
+        .is-limited .entry-meta { color: rgba(100, 210, 255, 0.8); }
 
         .entry-right { display: flex; align-items: center; gap: 10px; }
         .entry-amount { font-size: 16px; font-weight: 400; margin-right: 5px; }
         .entry-amount.inc { color: var(--accent-green); }
         .entry-amount.exp { color: var(--text-primary); }
         .entry-amount.blue-val { color: var(--accent-blue); font-weight: 500; }
+        .is-limited .entry-amount.exp { color: var(--accent-light-blue); } /* Auch Betrag leicht bläulich, falls gewünscht */
 
         .action-btn {
             background: #2C2C2E; border: none; padding: 6px; border-radius: 6px; 
@@ -305,6 +319,13 @@
                 <span class="onetime-label">Einmalige Zahlungen (Dieser Monat)</span>
                 <span class="onetime-val" id="sumOnetime">0 €</span>
             </div>
+
+            <div class="nav-btn-container" id="limitedBtnContainer" style="display: none;">
+                <button class="nav-btn" onclick="openLimitedView()">
+                    <span style="color: var(--accent-light-blue);">Befristete Zahlungen</span>
+                    <span style="color: #8E8E93">›</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -329,12 +350,37 @@
         </div>
     </div>
 
+    <div id="view-limited" class="view">
+        <header>
+            <button class="backup-btn" onclick="closeLimitedView()" style="font-size: 16px; color: var(--accent-blue);">
+                ‹ Zurück
+            </button>
+            <h1>Befristet</h1>
+            <div class="header-actions">
+                <button class="header-btn" onclick="openModal()">+</button>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            <div class="balance-section" style="padding: 20px;">
+                <div class="balance-label">Summe (Alle aktiven befristeten)</div>
+                <div class="balance-amount" id="sumLimited" style="font-size: 32px; color: var(--accent-light-blue);">0,00 €</div>
+            </div>
+
+            <div id="limitedList" class="group-container">
+                <ul class="group-list" id="limitedListUl">
+                    </ul>
+            </div>
+            <div style="height: 50px;"></div>
+        </div>
+    </div>
+
     <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('dashboard')">
+        <button class="tab-btn active" id="tab-dashboard" onclick="switchTab('dashboard')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             Übersicht
         </button>
-        <button class="tab-btn" onclick="switchTab('list')">
+        <button class="tab-btn" id="tab-list" onclick="switchTab('list')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
             Buchungen
         </button>
@@ -399,11 +445,22 @@
             
             if(tab === 'dashboard') {
                 document.getElementById('view-dashboard').classList.add('active');
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            } else {
+                document.getElementById('tab-dashboard').classList.add('active');
+            } else if (tab === 'list') {
                 document.getElementById('view-list').classList.add('active');
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-list').classList.add('active');
             }
+        }
+
+        function openLimitedView() {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-limited').classList.add('active');
+            renderLimitedList();
+        }
+
+        function closeLimitedView() {
+            switchTab('dashboard');
         }
 
         function handleSearch() {
@@ -424,6 +481,9 @@
         function updateApp() {
             updateDashboard();
             renderList();
+            if(document.getElementById('view-limited').classList.contains('active')) {
+                renderLimitedList();
+            }
         }
 
         // --- DASHBOARD ---
@@ -437,12 +497,17 @@
             let sumYearly = 0; let remY = false;
             
             let sumOnetimeThisMonth = 0;
+            let activeLimitedCount = 0;
             
             const now = new Date();
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
 
             entries.forEach(e => {
+                if (e.endDate && !isExpired(e.endDate)) {
+                    activeLimitedCount++;
+                }
+
                 if (isExpired(e.endDate)) return;
 
                 if(e.freq === 'monthly') {
@@ -507,6 +572,69 @@
             } else {
                 onetimeBox.style.display = 'none';
             }
+
+            const limitedBtnContainer = document.getElementById('limitedBtnContainer');
+            if(activeLimitedCount > 0) {
+                limitedBtnContainer.style.display = 'block';
+            } else {
+                limitedBtnContainer.style.display = 'none';
+            }
+        }
+
+        // --- LIMITED VIEW ---
+        function renderLimitedList() {
+            const ul = document.getElementById('limitedListUl');
+            ul.innerHTML = '';
+            
+            let totalLimitedSum = 0;
+            
+            let limitedItems = entries.filter(e => e.endDate && !isExpired(e.endDate));
+            
+            limitedItems.sort((a,b) => new Date(a.endDate) - new Date(b.endDate));
+
+            limitedItems.forEach(item => {
+                if(item.category === 'expense') totalLimitedSum += item.amount;
+                else totalLimitedSum -= item.amount;
+
+                const li = document.createElement('li');
+                li.className = 'group-item is-limited';
+                
+                const prefix = item.category === 'income' ? '+' : '-';
+                const valClass = item.category === 'income' ? 'inc' : 'exp';
+                
+                let dateStr = '';
+                if(item.date) {
+                    let d = new Date(item.date);
+                    if(!isNaN(d)) dateStr = d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
+                }
+
+                let subText = dateStr;
+                let ed = new Date(item.endDate);
+                let eStr = ed.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
+                subText += (subText ? ' · ' : '') + `⏳ Bis ${eStr}`;
+
+                let freqStr = '';
+                switch(item.freq) {
+                    case 'monthly': freqStr = ' (Mtl.)'; break;
+                    case 'quarterly': freqStr = ' (1/4 Jhr.)'; break;
+                    case 'semiannually': freqStr = ' (1/2 Jhr.)'; break;
+                    case 'yearly': freqStr = ' (Jhr.)'; break;
+                }
+
+                li.innerHTML = `
+                    <div class="entry-left">
+                        <div class="entry-name">${item.name} ${freqStr}</div>
+                        <div class="entry-meta">${subText}</div>
+                    </div>
+                    <div class="entry-right">
+                        <span class="entry-amount ${valClass}">${prefix} ${item.amount.toLocaleString('de-DE')} €</span>
+                        <button class="action-btn" onclick="openModal(${item.id})">${ICON_EDIT}</button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+
+            document.getElementById('sumLimited').innerText = totalLimitedSum.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
         }
 
         // --- LIST VIEW ---
@@ -550,12 +678,14 @@
                         const li = document.createElement('li');
                         li.className = 'group-item';
                         
+                        const hasEndDate = !!item.endDate;
                         const expired = isExpired(item.endDate);
+                        
                         if(expired) li.classList.add('expired');
+                        if(hasEndDate && !expired) li.classList.add('is-limited');
                         
                         const prefix = item.category === 'income' ? '+' : '-';
                         let valClass = item.category === 'income' ? 'inc' : 'exp';
-                        
                         if(group.isBlue) valClass = 'blue-val';
                         
                         let dateStr = '';
@@ -564,25 +694,24 @@
                             if(!isNaN(d)) dateStr = d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
                         }
 
-                        // Zusammenstellen der Infos unter dem Namen
                         let subText = dateStr;
                         if(expired) {
-                            subText += ' <span style="color:var(--accent-red);">(Beendet)</span>';
+                            subText += ' <span style="color:var(--accent-red); font-weight:bold;">(Beendet)</span>';
                         } else {
-                            // Befristung anzeigen
-                            if (item.endDate) {
+                            if (hasEndDate) {
                                 let ed = new Date(item.endDate);
                                 if(!isNaN(ed)) {
                                     let eStr = ed.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
-                                    subText += (subText ? ' · ' : '') + `<span style="color:#8E8E93;">⏳ Bis ${eStr}</span>`;
+                                    subText += (subText ? ' · ' : '') + `⏳ Bis ${eStr}`;
                                 }
                             }
-                            // Reminder checken
                             if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
                                 subText += ` <span class="reminder-dot">${ICON_WARN} Bald fällig</span>`;
                             }
                         }
 
+                        // Bei blauen Eintragen (Einmalig) oder abgelaufenen greifen wir nicht extra mit der blauen Farbe ein, 
+                        // bei den regulären befristeten macht die Klasse 'is-limited' die Farbe.
                         li.innerHTML = `
                             <div class="entry-left">
                                 <div class="entry-name" style="${group.isBlue ? 'color: var(--accent-blue);' : ''}">${item.name}</div>
@@ -700,12 +829,12 @@
             }
         }
 
-        function saveData() { localStorage.setItem('finApp_v18', JSON.stringify(entries)); }
+        function saveData() { localStorage.setItem('finApp_v19', JSON.stringify(entries)); }
         function loadData() {
-            const raw = localStorage.getItem('finApp_v18');
+            const raw = localStorage.getItem('finApp_v19');
             if(!raw) {
-                const v17 = localStorage.getItem('finApp_v17');
-                if(v17) { entries = JSON.parse(v17); saveData(); }
+                const v18 = localStorage.getItem('finApp_v18');
+                if(v18) { entries = JSON.parse(v18); saveData(); }
             } else { entries = JSON.parse(raw); }
         }
         function exportData() {
