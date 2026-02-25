@@ -21,7 +21,7 @@
             --accent-green: #30D158;
             --accent-red: #FF453A;
             --accent-blue: #0A84FF;
-            --accent-light-blue: #64D2FF; /* Dezentes Blau für Befristungen */
+            --accent-light-blue: #64D2FF; 
             --accent-yellow: #FFD60A;
             --separator: #38383A;
             --input-bg: #2C2C2E;
@@ -182,10 +182,8 @@
         .entry-left { display: flex; flex-direction: column; }
         .entry-name { font-size: 16px; font-weight: 500; color: white; display: flex; align-items: center; gap: 6px; }
         
-        /* Modifiziert für kleine, einzeilige Datumsangaben */
         .entry-meta { font-size: 9.5px; color: var(--text-secondary); margin-top: 3px; letter-spacing: 0.2px; }
         
-        /* Modifiziert für zeitlich begrenzte Einträge (Dezentes Blau) */
         .is-limited .entry-name { color: var(--accent-light-blue); }
         .is-limited .entry-meta { color: rgba(100, 210, 255, 0.8); }
 
@@ -194,7 +192,7 @@
         .entry-amount.inc { color: var(--accent-green); }
         .entry-amount.exp { color: var(--text-primary); }
         .entry-amount.blue-val { color: var(--accent-blue); font-weight: 500; }
-        .is-limited .entry-amount.exp { color: var(--accent-light-blue); } /* Auch Betrag leicht bläulich, falls gewünscht */
+        .is-limited .entry-amount.exp { color: var(--accent-light-blue); }
 
         .action-btn {
             background: #2C2C2E; border: none; padding: 6px; border-radius: 6px; 
@@ -312,7 +310,7 @@
                 </div>
                 
                 <div id="intervalStats" class="interval-row">
-                    </div>
+                </div>
             </div>
 
             <div class="onetime-box" id="dashboardOnetime" style="display: none;">
@@ -369,7 +367,7 @@
 
             <div id="limitedList" class="group-container">
                 <ul class="group-list" id="limitedListUl">
-                    </ul>
+                </ul>
             </div>
             <div style="height: 50px;"></div>
         </div>
@@ -476,6 +474,25 @@
             const today = new Date();
             end.setHours(23, 59, 59, 999);
             return today > end;
+        }
+
+        // Berechnet die verbleibenden Monate
+        function getRemainingMonths(endDateStr) {
+            if (!endDateStr) return 0;
+            const end = new Date(endDateStr);
+            const today = new Date();
+            if (today > end) return 0;
+            
+            let months = (end.getFullYear() - today.getFullYear()) * 12;
+            months -= today.getMonth();
+            months += end.getMonth();
+            
+            // Wenn der Tag im Zielmonat noch in der Zukunft liegt oder gleich ist, runden wir auf
+            if (end.getDate() >= today.getDate()) {
+                months += 1;
+            }
+            
+            return months <= 0 ? 1 : months;
         }
 
         function updateApp() {
@@ -611,7 +628,12 @@
                 let subText = dateStr;
                 let ed = new Date(item.endDate);
                 let eStr = ed.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
-                subText += (subText ? ' · ' : '') + `⏳ Bis ${eStr}`;
+                
+                // Roter Countdown hinzugefügt
+                let remMonths = getRemainingMonths(item.endDate);
+                let countdownTxt = `<span style="color: var(--accent-red); margin-left: 4px;">(Noch ${remMonths} ${remMonths === 1 ? 'Monat' : 'Monate'})</span>`;
+                
+                subText += (subText ? ' · ' : '') + `⏳ Bis ${eStr}` + countdownTxt;
 
                 let freqStr = '';
                 switch(item.freq) {
@@ -702,7 +724,12 @@
                                 let ed = new Date(item.endDate);
                                 if(!isNaN(ed)) {
                                     let eStr = ed.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
-                                    subText += (subText ? ' · ' : '') + `⏳ Bis ${eStr}`;
+                                    
+                                    // Roter Countdown hinzugefügt
+                                    let remMonths = getRemainingMonths(item.endDate);
+                                    let countdownTxt = `<span style="color: var(--accent-red); margin-left: 4px;">(Noch ${remMonths} ${remMonths === 1 ? 'Monat' : 'Monate'})</span>`;
+                                    
+                                    subText += (subText ? ' · ' : '') + `⏳ Bis ${eStr}` + countdownTxt;
                                 }
                             }
                             if(key !== 'monthly' && key !== 'onetime' && item.date && checkReminder(item.date)) {
@@ -710,8 +737,6 @@
                             }
                         }
 
-                        // Bei blauen Eintragen (Einmalig) oder abgelaufenen greifen wir nicht extra mit der blauen Farbe ein, 
-                        // bei den regulären befristeten macht die Klasse 'is-limited' die Farbe.
                         li.innerHTML = `
                             <div class="entry-left">
                                 <div class="entry-name" style="${group.isBlue ? 'color: var(--accent-blue);' : ''}">${item.name}</div>
